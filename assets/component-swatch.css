@@ -1,0 +1,34 @@
+.swatch {
+  --swatch--size: 4.6rem;
+  --swatch--border-radius: 0.6rem;
+  display: block;
+  width: var(--swatch--size);
+  max-width: 100%;
+  aspect-ratio: 2 / 1;
+  background: var(--swatch--background, transparent); /* Use JavaScript-set value */
+  background-position: var(--swatch-focal-point, center);
+  background-size: cover;
+  background-origin: border-box;
+  border: 0.1rem solid rgba(var(--color-foreground), 0.2);
+  border-radius: var(--swatch--border-radius);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  cursor: pointer;
+}
+
+.swatch:hover,
+.swatch--selected {
+  transform: scale(1.05); /* Scale on hover/selection */
+  box-shadow: 0 0 0 0.2rem rgba(var(--color-foreground), 0.3); /* Glow effect */
+  /* Use the JavaScript-set background, fallback to transparent to avoid white */
+  background: var(--swatch--background, transparent) !important;
+}
+
+.swatch--square {
+  --swatch--border-radius: 0.2rem; /* Square variant */
+}
+
+.swatch--unavailable {
+  border-style: solid; /* Ensure solid border */
+  border-color: rgba(var(--color-foreground), 0.4);
+  opacity: 0.6; /* Faded look */
+}

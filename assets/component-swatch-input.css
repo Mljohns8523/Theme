@@ -1,0 +1,102 @@
+/* swatch-input lives in its own file for reusability of the swatch in other areas than the product form context */
+.swatch-input__input {
+  display: none; /* Hide the radio input circles */
+}
+
+.swatch-wrapper {
+  display: flex; /* Ensure horizontal layout */
+  flex-wrap: wrap; /* Allow wrapping if needed */
+  gap: 0.8rem; /* Consistent spacing between swatches */
+}
+
+.swatch-input__input + .swatch-input__label {
+  --swatch-input--border-radius: 0.6rem; /* Matches swatch's rounded rectangle */
+  --swatch-input--size: 3.5rem; /* Increased size to match swatch */
+
+  display: inline-block;
+  max-width: 100%;
+  border-radius: var(--swatch-input--border-radius);
+  cursor: pointer;
+  outline-offset: 0.2rem;
+  outline-color: transparent;
+  outline-style: solid;
+  transition-property: outline-color, outline-width, box-shadow, transform;
+  transition-duration: var(--duration-short, 0.2s);
+  transition-timing-function: ease;
+  forced-color-adjust: none;
+  /* Use JavaScript-set background */
+  background: var(--swatch--background, transparent); /* Default to transparent */
+}
+
+/* Active state */
+.swatch-input__input:active + .swatch-input__label,
+.swatch-input__input:checked + .swatch-input__label {
+  outline: 0.1rem solid rgb(var(--color-foreground));
+  transform: scale(1.05); /* Matches swatch's selected effect */
+  box-shadow: 0 0 0 0.2rem rgba(var(--color-foreground), 0.3); /* Matches swatch's glow */
+  background: var(--swatch--background, transparent) !important; /* Preserve JavaScript color */
+}
+
+/* Hover state */
+.swatch-input__input + .swatch-input__label:hover,
+.swatch-input__input:hover + .swatch-input__label {
+  outline: 0.1rem solid rgba(var(--color-foreground), 0.4);
+  transform: scale(1.05); /* Matches swatch's hover effect */
+  background: var(--swatch--background, transparent) !important; /* Preserve JavaScript color */
+}
+
+/* Focus visible */
+.swatch-input__input:focus-visible + .swatch-input__label {
+  outline: 0.1rem solid rgba(var(--color-foreground), 0.5);
+  box-shadow: 0 0 0 0.2rem rgb(var(--color-background)), 0 0 0.1rem 0.4rem rgba(var(--color-foreground), 0.3);
+  transform: scale(1.05); /* Consistent with hover/selected */
+  background: var(--swatch--background, transparent) !important; /* Preserve JavaScript color */
+}
+
+/* Active and focused */
+.swatch-input__input:active:focus-visible + .swatch-input__label,
+.swatch-input__input:checked:focus-visible + .swatch-input__label {
+  outline: 0.1rem solid rgb(var(--color-foreground));
+  box-shadow: 0 0 0 0.2rem rgb(var(--color-background)), 0 0 0.1rem 0.4rem rgba(var(--color-foreground), 0.3);
+  transform: scale(1.05); /* Consistent with active */
+  background: var(--swatch--background, transparent) !important; /* Preserve JavaScript color */
+}
+
+/* Visually disabled */
+.swatch-input__input.visually-disabled:not(:active):not(:checked) + .swatch-input__label {
+  transition: none;
+  opacity: 0.6; /* Matches swatch--unavailable */
+  background: var(--swatch--background, transparent) !important; /* Preserve color */
+}
+
+.swatch-input__input.visually-disabled:not(:active):not(:checked) + .swatch-input__label:hover {
+  outline: none;
+  transform: none; /* Prevent hover effects */
+  background: var(--swatch--background, transparent) !important; /* Preserve color */
+}
+
+/* Actually disabled */
+.swatch-input__input:disabled + .swatch-input__label {
+  pointer-events: none;
+  opacity: 0.6; /* Matches swatch--unavailable */
+  background: var(--swatch--background, transparent) !important; /* Preserve color */
+}
+
+/* Overrides for swatch snippet when used inside disabled swatch-input */
+.swatch-input__input:disabled + .swatch-input__label > .swatch,
+.swatch-input__input.visually-disabled + .swatch-input__label > .swatch {
+  position: relative;
+  overflow: hidden;
+}
+
+/* Disabled styles */
+.swatch-input__input:disabled + .swatch-input__label > .swatch,
+.swatch-input__input.visually-disabled + .swatch-input__label > .swatch {
+  opacity: 0.6; /* Consistent with swatch--unavailable */
+}
+
+/* Remove the crossed-out line for disabled swatches */
+.swatch-input__input:disabled + .swatch-input__label > .swatch::after,
+.swatch-input__input.visually-disabled + .swatch-input__label > .swatch::after {
+  content: none; /* Disable the diagonal line */
+}

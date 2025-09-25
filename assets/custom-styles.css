@@ -1,0 +1,49 @@
+/* =============================================
+   FINAL HEADER ALIGNMENT (V4 - Based on HTML)
+   ============================================= */
+@media (min-width: 990px) {
+    header.header.header--top-center {
+        display: flex !important;
+        align-items: center !important;
+        position: relative !important;
+        padding-top: 1rem !important;
+        padding-bottom: 1rem !important;
+    }
+
+    .header__heading {
+        position: absolute !important;
+        left: 50% !important;
+        top: 50% !important;
+        transform: translate(-50%, -50%) !important;
+        z-index: 10 !important;
+    }
+
+    .header__nav-wrapper {
+        flex-grow: 1 !important;
+        display: flex !important;
+        justify-content: space-between !important;
+        align-items: center !important;
+    }
+
+    .header__menu--left {
+        padding-right: 120px !important;
+    }
+
+    .header__menu--right {
+        padding-left: 120px !important;
+    }
+
+    .header__icons {
+        flex-shrink: 0 !important;
+        z-index: 11 !important;
+    }
+}
+/* =============================================
+   FIX: PRODUCT IMAGE SIZE CONSISTENCY
+   ============================================= 
+   This prevents a single product in a grid row
+   from stretching to fill the entire width.
+*/
+.grid__item {
+    flex-grow: 0 !important;
+}
