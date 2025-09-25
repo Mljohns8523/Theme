@@ -1,0 +1,299 @@
+{% comment %}
+  Mobile-Optimized Flash Sale Countdown with Solid Background Colors
+  Uses solid colors, fits mobile screens, and keeps single-line layout
+{% endcomment %}
+
+<style>
+  /* Base styles for all countdowns */
+  .flash-sale-countdown {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-family: {{ settings.typography_font_body | font_family }};
+    padding: {{ section.settings.padding | default: '12' }}px 20px;
+    margin: 12px auto;
+    border-radius: 8px;
+    font-size: {{ section.settings.font_size | default: '16' }}px;
+    text-align: center;
+    max-width: 380px;
+    transition: all 0.3s ease;
+    flex-wrap: nowrap;
+    white-space: nowrap;
+  }
+
+  /* Modern Minimal Style */
+  .flash-sale-countdown.style-minimal {
+    background: {{ section.settings.background_color | default: '#f8f9fa' }};
+    color: {{ section.settings.text_color | default: '#333333' }};
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  }
+
+  .flash-sale-countdown.style-minimal:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+  }
+
+  .flash-sale-countdown.style-minimal .countdown-timer span {
+    background: {{ section.settings.accent_color | default: '#e9ecef' }};
+    padding: 4px 8px;
+    border-radius: 4px;
+  }
+
+  /* Bold Vibrant Style */
+  .flash-sale-countdown.style-vibrant {
+    background: {{ section.settings.background_color | default: '#ff4d4d' }};
+    color: {{ section.settings.text_color | default: '#ffffff' }};
+    font-family: {{ settings.typography_font_heading | font_family }};
+    text-transform: uppercase;
+    {% if section.settings.enable_animation %}
+    animation: borderPulse 2.5s infinite ease-in-out;
+    {% endif %}
+  }
+
+  @keyframes borderPulse {
+    0% { box-shadow: 0 0 0 0 rgba(255, 77, 77, 0.7); }
+    50% { box-shadow: 0 0 0 4px rgba(255, 77, 77, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(255, 77, 77, 0); }
+  }
+
+  .flash-sale-countdown.style-vibrant .countdown-timer span {
+    background: {{ section.settings.accent_color | default: 'rgba(0, 0, 0, 0.4)' }};
+    padding: 5px 9px;
+    border-radius: 4px;
+  }
+
+  /* Elegant Classic Style */
+  .flash-sale-countdown.style-classic {
+    background: {{ section.settings.background_color | default: '#2c3e50' }};
+    color: {{ section.settings.text_color | default: '#ecf0f1' }};
+    font-family: 'Georgia', serif;
+    border: 1px solid {{ section.settings.accent_color | default: '#34495e' }};
+    {% if section.settings.enable_animation %}
+    animation: fadeIn 2s ease-in-out infinite;
+    {% endif %}
+  }
+
+  @keyframes fadeIn {
+    0% { opacity: 0.9; }
+    50% { opacity: 1; }
+    100% { opacity: 0.9; }
+  }
+
+  .flash-sale-countdown.style-classic .countdown-message {
+    font-style: italic;
+    text-shadow: 0 1px 1px rgba(0, 0, 0, 0.15);
+  }
+
+  .flash-sale-countdown.style-classic .countdown-timer span {
+    border-bottom: 2px solid {{ section.settings.text_color | default: '#ecf0f1' }};
+    padding: 0 2px;
+  }
+
+  /* Shared timer and message styles */
+  .countdown-message {
+    font-weight: 500;
+    margin-right: 12px;
+  }
+
+  .countdown-timer span {
+    font-weight: 700;
+    margin: 0 6px;
+  }
+
+  /* Responsive design */
+  @media (max-width: 600px) {
+    .flash-sale-countdown {
+      font-size: {% assign scale = section.settings.mobile_font_scale | default: 80 | divided_by: 100.0 %}{{ section.settings.font_size | times: scale | default: '12' | at_least: 12 }}px;
+      padding: {{ section.settings.padding | times: 0.833 | default: '10' }}px 14px;
+      max-width: 90vw;
+    }
+
+    .countdown-timer span {
+      margin: 0 4px;
+      padding: 3px 6px;
+    }
+
+    .flash-sale-countdown.style-vibrant .countdown-timer span {
+      padding: 3px 6px;
+    }
+
+    .flash-sale-countdown.style-classic .countdown-timer span {
+      padding: 0 2px;
+    }
+
+    .countdown-message {
+      margin-right: 8px;
+    }
+
+    .flash-sale-countdown.style-minimal:hover {
+      transform: none;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+    }
+  }
+</style>
+
+{% for block in section.blocks %}
+  {% if block.type == 'countdown' %}
+    <div
+      class="flash-sale-countdown style-{{ section.settings.style | default: 'minimal' }}"
+      id="countdown-{{ block.id }}"
+      data-end-time="{{ block.settings.end_time }}"
+    >
+      <span class="countdown-message">{{ block.settings.message | escape }}</span>
+      <span class="countdown-timer">
+        <span class="hours">00</span>h <span class="minutes">00</span>m <span class="seconds">00</span>s
+      </span>
+    </div>
+  {% endif %}
+{% endfor %}
+
+<script>
+  document.querySelectorAll('.flash-sale-countdown').forEach(countdown => {
+    const endTimeStr = countdown.getAttribute('data-end-time');
+    const endTime = new Date(endTimeStr).getTime();
+
+    if (isNaN(endTime)) {
+      countdown.innerHTML = 'Invalid date';
+      return;
+    }
+
+    const updateCountdown = () => {
+      const now = new Date().getTime();
+      const timeLeft = endTime - now;
+
+      if (timeLeft <= 0) {
+        countdown.innerHTML = 'Sale ended!';
+        clearInterval(timer);
+        return;
+      }
+
+      const hours = Math.floor((timeLeft % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+      const minutes = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60));
+      const seconds = Math.floor((timeLeft % (1000 * 60)) / 1000);
+
+      countdown.querySelector('.hours').textContent = hours.toString().padStart(2, '0');
+      countdown.querySelector('.minutes').textContent = minutes.toString().padStart(2, '0');
+      countdown.querySelector('.seconds').textContent = seconds.toString().padStart(2, '0');
+    };
+
+    updateCountdown();
+    const timer = setInterval(updateCountdown, 1000);
+  });
+</script>
+
+{% schema %}
+{
+  "name": "Flash Sale Countdown",
+  "settings": [
+    {
+      "type": "select",
+      "id": "style",
+      "label": "Countdown Style",
+      "options": [
+        {
+          "value": "minimal",
+          "label": "Modern Minimal"
+        },
+        {
+          "value": "vibrant",
+          "label": "Bold Vibrant"
+        },
+        {
+          "value": "classic",
+          "label": "Elegant Classic"
+        }
+      ],
+      "default": "minimal",
+      "info": "Choose the visual style of the countdown timer."
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Background Color",
+      "default": "#f8f9fa"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text Color",
+      "default": "#333333"
+    },
+    {
+      "type": "color",
+      "id": "accent_color",
+      "label": "Accent Color",
+      "default": "#e9ecef",
+      "info": "Used for timer backgrounds or borders."
+    },
+    {
+      "type": "range",
+      "id": "font_size",
+      "label": "Font Size (Desktop)",
+      "min": 14,
+      "max": 24,
+      "step": 1,
+      "default": 16,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "mobile_font_scale",
+      "label": "Mobile Font Scale",
+      "min": 60,
+      "max": 90,
+      "step": 5,
+      "default": 80,
+      "unit": "%",
+      "info": "Percentage of desktop font size for mobile devices."
+    },
+    {
+      "type": "range",
+      "id": "padding",
+      "label": "Padding",
+      "min": 8,
+      "max": 20,
+      "step": 1,
+      "default": 12,
+      "unit": "px"
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_animation",
+      "label": "Enable Animations",
+      "default": true,
+      "info": "Toggle animations like border pulse (Vibrant) or fading (Classic)."
+    }
+  ],
+  "blocks": [
+    {
+      "type": "countdown",
+      "name": "Countdown Timer",
+      "settings": [
+        {
+          "type": "text",
+          "id": "message",
+          "label": "Message",
+          "default": "Hurry! Sale ends in:"
+        },
+        {
+          "type": "text",
+          "id": "end_time",
+          "label": "Sale End Date and Time (YYYY-MM-DD HH:MM:SS)",
+          "default": "2025-12-31 23:59:59",
+          "info": "Format: YYYY-MM-DD HH:MM:SS (e.g., 2025-12-31 23:59:59)"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Flash Sale Countdown",
+      "blocks": [
+        {
+          "type": "countdown"
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

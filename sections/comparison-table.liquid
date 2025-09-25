@@ -1,0 +1,528 @@
+{% schema %}
+{
+  "name": "Us vs Other Brands",
+  "settings": [
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Section Heading",
+      "default": "Us vs Other Brands"
+    },
+    {
+      "type": "range",
+      "id": "heading_size_desktop",
+      "label": "Heading Font Size (Desktop)",
+      "min": 24,
+      "max": 60,
+      "step": 2,
+      "unit": "px",
+      "default": 48
+    },
+    {
+      "type": "range",
+      "id": "heading_size_mobile",
+      "label": "Heading Font Size (Mobile)",
+      "min": 18,
+      "max": 40,
+      "step": 2,
+      "unit": "px",
+      "default": 32
+    },
+    {
+      "type": "color",
+      "id": "heading_color",
+      "label": "Heading Color",
+      "default": "#E5E7EB"
+    },
+    {
+      "type": "textarea",
+      "id": "description",
+      "label": "Description",
+      "default": "In a small batch study using Whoop and Oura, we were able to track sleep scores before and after taking Sweet Dreams."
+    },
+    {
+      "type": "range",
+      "id": "description_size_desktop",
+      "label": "Description Font Size (Desktop)",
+      "min": 12,
+      "max": 24,
+      "step": 1,
+      "unit": "px",
+      "default": 16
+    },
+    {
+      "type": "range",
+      "id": "description_size_mobile",
+      "label": "Description Font Size (Mobile)",
+      "min": 10,
+      "max": 20,
+      "step": 1,
+      "unit": "px",
+      "default": 14
+    },
+    {
+      "type": "color",
+      "id": "description_color",
+      "label": "Description Color",
+      "default": "#D1D5DB"
+    },
+    {
+      "type": "text",
+      "id": "button_text",
+      "label": "Button Text",
+      "default": "Try Sweet Dreams"
+    },
+    {
+      "type": "url",
+      "id": "button_link",
+      "label": "Button Link"
+    },
+    {
+      "type": "color",
+      "id": "button_background_color",
+      "label": "Button Background Color",
+      "default": "#A78BFA"
+    },
+    {
+      "type": "color",
+      "id": "button_text_color",
+      "label": "Button Text Color",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "header",
+      "content": "Comparison Items"
+    },
+    {
+      "type": "text",
+      "id": "item_1",
+      "label": "Item 1",
+      "default": "Optimized Dosing"
+    },
+    {
+      "type": "text",
+      "id": "item_1_us_icon",
+      "label": "Us Icon for Item 1",
+      "default": "fas fa-check-circle",
+      "info": "Enter a Font Awesome icon name (e.g., 'fas fa-check-circle')."
+    },
+    {
+      "type": "text",
+      "id": "item_1_other_icon",
+      "label": "Other Brands Icon for Item 1",
+      "default": "fa-solid fa-xmark",
+      "info": "Enter a Font Awesome icon name (e.g., 'fa-solid fa-xmark')."
+    },
+    {
+      "type": "text",
+      "id": "item_2",
+      "label": "Item 2",
+      "default": "Plant Based"
+    },
+    {
+      "type": "text",
+      "id": "item_2_us_icon",
+      "label": "Us Icon for Item 2",
+      "default": "fas fa-check-circle",
+      "info": "Enter a Font Awesome icon name (e.g., 'fas fa-check-circle')."
+    },
+    {
+      "type": "text",
+      "id": "item_2_other_icon",
+      "label": "Other Brands Icon for Item 2",
+      "default": "fa-solid fa-xmark",
+      "info": "Enter a Font Awesome icon name (e.g., 'fa-solid fa-xmark')."
+    },
+    {
+      "type": "text",
+      "id": "item_3",
+      "label": "Item 3",
+      "default": "Low Sugar"
+    },
+    {
+      "type": "text",
+      "id": "item_3_us_icon",
+      "label": "Us Icon for Item 3",
+      "default": "fas fa-check-circle",
+      "info": "Enter a Font Awesome icon name (e.g., 'fas fa-check-circle')."
+    },
+    {
+      "type": "text",
+      "id": "item_3_other_icon",
+      "label": "Other Brands Icon for Item 3",
+      "default": "fa-solid fa-xmark",
+      "info": "Enter a Font Awesome icon name (e.g., 'fa-solid fa-xmark')."
+    },
+    {
+      "type": "text",
+      "id": "item_4",
+      "label": "Item 4",
+      "default": "Simple Ingredients"
+    },
+    {
+      "type": "text",
+      "id": "item_4_us_icon",
+      "label": "Us Icon for Item 4",
+      "default": "fas fa-check-circle",
+      "info": "Enter a Font Awesome icon name (e.g., 'fas fa-check-circle')."
+    },
+    {
+      "type": "text",
+      "id": "item_4_other_icon",
+      "label": "Other Brands Icon for Item 4",
+      "default": "fa-solid fa-xmark",
+      "info": "Enter a Font Awesome icon name (e.g., 'fa-solid fa-xmark')."
+    },
+    {
+      "type": "text",
+      "id": "item_5",
+      "label": "Item 5",
+      "default": "3rd Party Tested"
+    },
+    {
+      "type": "text",
+      "id": "item_5_us_icon",
+      "label": "Us Icon for Item 5",
+      "default": "fas fa-check-circle",
+      "info": "Enter a Font Awesome icon name (e.g., 'fas fa-check-circle')."
+    },
+    {
+      "type": "text",
+      "id": "item_5_other_icon",
+      "label": "Other Brands Icon for Item 5",
+      "default": "fas fa-check-circle",
+      "info": "Enter a Font Awesome icon name (e.g., 'fas fa-check-circle')."
+    },
+    {
+      "type": "text",
+      "id": "item_6",
+      "label": "Item 6",
+      "default": "Delicious Taste"
+    },
+    {
+      "type": "text",
+      "id": "item_6_us_icon",
+      "label": "Us Icon for Item 6",
+      "default": "fas fa-check-circle",
+      "info": "Enter a Font Awesome icon name (e.g., 'fas fa-check-circle')."
+    },
+    {
+      "type": "text",
+      "id": "item_6_other_icon",
+      "label": "Other Brands Icon for Item 6",
+      "default": "fa-solid fa-xmark",
+      "info": "Enter a Font Awesome icon name (e.g., 'fa-solid fa-xmark')."
+    },
+    {
+      "type": "color",
+      "id": "us_icon_color",
+      "label": "Us Icon Color",
+      "default": "#34D399"
+    },
+    {
+      "type": "color",
+      "id": "other_icon_color",
+      "label": "Other Brands Icon Color",
+      "default": "#F472B6"
+    },
+    {
+      "type": "color",
+      "id": "table_border_color",
+      "label": "Table Border Color",
+      "default": "#4B5563"
+    },
+    {
+      "type": "color",
+      "id": "table_background_color",
+      "label": "Table Background Color",
+      "default": "#1E293B"
+    },
+    {
+      "type": "range",
+      "id": "icon_size",
+      "label": "Icon Size",
+      "min": 16,
+      "max": 48,
+      "step": 2,
+      "unit": "px",
+      "default": 24
+    }
+  ],
+  "presets": [
+    {
+      "name": "Us vs Other Brands"
+    }
+  ]
+}
+{% endschema %}
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg==" crossorigin="anonymous" referrerpolicy="no-referrer">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap">
+
+<style>
+  .us-vs-other-brands {
+    background-color: #1F2A44;
+    padding: 60px 20px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+    max-width: 1200px;
+    margin: 0 auto;
+    isolation: isolate;
+  }
+  .us-vs-other-brands__wrapper {
+    position: relative;
+    z-index: 1;
+  }
+  .us-vs-other-brands__heading {
+    font-family: 'Poppins', sans-serif;
+    font-size: {{ section.settings.heading_size_desktop }}px;
+    font-weight: 600;
+    color: {{ section.settings.heading_color }};
+    margin-bottom: 16px;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+  }
+  .us-vs-other-brands__description {
+    font-family: 'Poppins', sans-serif;
+    font-size: {{ section.settings.description_size_desktop }}px;
+    color: {{ section.settings.description_color }};
+    max-width: 600px;
+    margin: 0 auto 40px;
+    line-height: 1.6;
+    font-weight: 400;
+  }
+  .us-vs-other-brands__button {
+    display: inline-block;
+    font-family: 'Poppins', sans-serif;
+    font-size: 16px;
+    padding: 12px 28px;
+    background-color: {{ section.settings.button_background_color }};
+    color: {{ section.settings.button_text_color }};
+    border-radius: 24px;
+    text-decoration: none;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+    margin-top: 20px;
+  }
+  .us-vs-other-brands__button:hover {
+    background-color: darken({{ section.settings.button_background_color }}, 10%);
+    transform: translateY(-2px);
+  }
+  .us-vs-other-brands__table {
+    display: flex;
+    justify-content: center;
+    margin: 0 auto;
+    max-width: 650px;
+    border: 1px dashed {{ section.settings.table_border_color }};
+    background-color: {{ section.settings.table_background_color }};
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  }
+  .us-vs-other-brands__column {
+    flex: 1;
+    padding: 25px 20px;
+    text-align: left;
+  }
+  .us-vs-other-brands__column--us {
+    border-right: 1px dashed {{ section.settings.table_border_color }};
+  }
+  .us-vs-other-brands__column-title {
+    font-family: 'Poppins', sans-serif;
+    font-size: 20px;
+    color: #D1D5DB;
+    margin-bottom: 25px;
+    font-weight: 600;
+    text-transform: uppercase;
+  }
+  .us-vs-other-brands__item {
+    display: flex;
+    align-items: center;
+    margin-bottom: 18px;
+    font-family: 'Poppins', sans-serif;
+    font-size: 16px;
+    color: #E5E7EB;
+    line-height: 1.5;
+  }
+  .us-vs-other-brands__icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    margin-right: 12px;
+    flex-shrink: 0;
+  }
+  .us-vs-other-brands__icon i {
+    font-size: {{ section.settings.icon_size }}px;
+    font-weight: 900;
+  }
+  .us-vs-other-brands__column--us .us-vs-other-brands__icon {
+    background-color: {{ section.settings.us_icon_color | append: '20' }};
+  }
+  .us-vs-other-brands__column--us .us-vs-other-brands__icon i {
+    color: {{ section.settings.us_icon_color }};
+  }
+  .us-vs-other-brands__column--other .us-vs-other-brands__icon {
+    background-color: {{ section.settings.other_icon_color | append: '20' }};
+  }
+  .us-vs-other-brands__column--other .us-vs-other-brands__icon i {
+    color: {{ section.settings.other_icon_color }};
+  }
+
+  @media (max-width: 767px) {
+    .us-vs-other-brands {
+      padding: 40px 16px;
+    }
+    .us-vs-other-brands__heading {
+      font-size: {{ section.settings.heading_size_mobile }}px;
+    }
+    .us-vs-other-brands__description {
+      font-size: {{ section.settings.description_size_mobile }}px;
+      max-width: 100%;
+    }
+    .us-vs-other-brands__table {
+      flex-direction: column;
+      border: none;
+      max-width: 100%;
+    }
+    .us-vs-other-brands__column--us {
+      border-right: none;
+      border-bottom: 1px dashed {{ section.settings.table_border_color }};
+    }
+    .us-vs-other-brands__column {
+      padding: 20px 16px;
+    }
+    .us-vs-other-brands__column-title {
+      font-size: 18px;
+    }
+    .us-vs-other-brands__item {
+      margin-bottom: 14px;
+    }
+    .us-vs-other-brands__button {
+      padding: 10px 20px;
+    }
+  }
+</style>
+
+<section class="us-vs-other-brands">
+  <div class="us-vs-other-brands__wrapper">
+    {% if section.settings.heading != blank %}
+      <h2 class="us-vs-other-brands__heading">{{ section.settings.heading | escape }}</h2>
+    {% endif %}
+
+    {% if section.settings.description != blank %}
+      <p class="us-vs-other-brands__description">{{ section.settings.description | escape }}</p>
+    {% endif %}
+
+    <div class="us-vs-other-brands__table">
+      <div class="us-vs-other-brands__column us-vs-other-brands__column--us">
+        <div class="us-vs-other-brands__column-title">Us</div>
+        {% if section.settings.item_1 != blank %}
+          <div class="us-vs-other-brands__item">
+            <div class="us-vs-other-brands__icon">
+              <i class="{{ section.settings.item_1_us_icon | escape }}"></i>
+            </div>
+            <span>{{ section.settings.item_1 | escape }}</span>
+          </div>
+        {% endif %}
+        {% if section.settings.item_2 != blank %}
+          <div class="us-vs-other-brands__item">
+            <div class="us-vs-other-brands__icon">
+              <i class="{{ section.settings.item_2_us_icon | escape }}"></i>
+            </div>
+            <span>{{ section.settings.item_2 | escape }}</span>
+          </div>
+        {% endif %}
+        {% if section.settings.item_3 != blank %}
+          <div class="us-vs-other-brands__item">
+            <div class="us-vs-other-brands__icon">
+              <i class="{{ section.settings.item_3_us_icon | escape }}"></i>
+            </div>
+            <span>{{ section.settings.item_3 | escape }}</span>
+          </div>
+        {% endif %}
+        {% if section.settings.item_4 != blank %}
+          <div class="us-vs-other-brands__item">
+            <div class="us-vs-other-brands__icon">
+              <i class="{{ section.settings.item_4_us_icon | escape }}"></i>
+            </div>
+            <span>{{ section.settings.item_4 | escape }}</span>
+          </div>
+        {% endif %}
+        {% if section.settings.item_5 != blank %}
+          <div class="us-vs-other-brands__item">
+            <div class="us-vs-other-brands__icon">
+              <i class="{{ section.settings.item_5_us_icon | escape }}"></i>
+            </div>
+            <span>{{ section.settings.item_5 | escape }}</span>
+          </div>
+        {% endif %}
+        {% if section.settings.item_6 != blank %}
+          <div class="us-vs-other-brands__item">
+            <div class="us-vs-other-brands__icon">
+              <i class="{{ section.settings.item_6_us_icon | escape }}"></i>
+            </div>
+            <span>{{ section.settings.item_6 | escape }}</span>
+          </div>
+        {% endif %}
+      </div>
+      <div class="us-vs-other-brands__column us-vs-other-brands__column--other">
+        <div class="us-vs-other-brands__column-title">Other Brands</div>
+        {% if section.settings.item_1 != blank %}
+          <div class="us-vs-other-brands__item">
+            <div class="us-vs-other-brands__icon">
+              <i class="{{ section.settings.item_1_other_icon | escape }}"></i>
+            </div>
+            <span>{{ section.settings.item_1 | escape }}</span>
+          </div>
+        {% endif %}
+        {% if section.settings.item_2 != blank %}
+          <div class="us-vs-other-brands__item">
+            <div class="us-vs-other-brands__icon">
+              <i class="{{ section.settings.item_2_other_icon | escape }}"></i>
+            </div>
+            <span>{{ section.settings.item_2 | escape }}</span>
+          </div>
+        {% endif %}
+        {% if section.settings.item_3 != blank %}
+          <div class="us-vs-other-brands__item">
+            <div class="us-vs-other-brands__icon">
+              <i class="{{ section.settings.item_3_other_icon | escape }}"></i>
+            </div>
+            <span>{{ section.settings.item_3 | escape }}</span>
+          </div>
+        {% endif %}
+        {% if section.settings.item_4 != blank %}
+          <div class="us-vs-other-brands__item">
+            <div class="us-vs-other-brands__icon">
+              <i class="{{ section.settings.item_4_other_icon | escape }}"></i>
+            </div>
+            <span>{{ section.settings.item_4 | escape }}</span>
+          </div>
+        {% endif %}
+        {% if section.settings.item_5 != blank %}
+          <div class="us-vs-other-brands__item">
+            <div class="us-vs-other-brands__icon">
+              <i class="{{ section.settings.item_5_other_icon | escape }}"></i>
+            </div>
+            <span>{{ section.settings.item_5 | escape }}</span>
+          </div>
+        {% endif %}
+        {% if section.settings.item_6 != blank %}
+          <div class="us-vs-other-brands__item">
+            <div class="us-vs-other-brands__icon">
+              <i class="{{ section.settings.item_6_other_icon | escape }}"></i>
+            </div>
+            <span>{{ section.settings.item_6 | escape }}</span>
+          </div>
+        {% endif %}
+      </div>
+    </div>
+
+    {% if section.settings.button_text != blank and section.settings.button_link != blank %}
+      <a href="{{ section.settings.button_link }}" class="us-vs-other-brands__button">{{ section.settings.button_text | escape }}</a>
+    {% endif %}
+  </div>
+</section>

@@ -1,0 +1,192 @@
+{% schema %}
+{
+  "name": "Image Color Banner",
+  "settings": [
+    {
+      "type": "image_picker",
+      "id": "banner_image",
+      "label": "Banner Image",
+      "info": "Upload a high-quality image for color manipulation."
+    },
+    {
+      "type": "range",
+      "id": "banner_height",
+      "label": "Banner Height (px)",
+      "min": 50,
+      "max": 200,
+      "step": 5,
+      "default": 120
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_animation",
+      "label": "Enable Color Cycle Animation",
+      "default": true
+    },
+    {
+      "type": "range",
+      "id": "animation_speed",
+      "label": "Animation Speed (seconds)",
+      "min": 2,
+      "max": 10,
+      "step": 1,
+      "default": 5
+    },
+    {
+      "type": "color",
+      "id": "color_tint_1",
+      "label": "Color Tint 1",
+      "default": "#ff6f61"
+    },
+    {
+      "type": "color",
+      "id": "color_tint_2",
+      "label": "Color Tint 2",
+      "default": "#4a90e2"
+    },
+    {
+      "type": "color",
+      "id": "color_tint_3",
+      "label": "Color Tint 3",
+      "default": "#50c878"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Image Color Banner"
+    }
+  ]
+}
+{% endschema %}
+
+<div class="image-color-banner" style="height: {{ section.settings.banner_height }}px;">
+  {% if section.settings.banner_image %}
+    <div class="banner-image original">
+      <img src="{{ section.settings.banner_image | img_url: 'master' }}" alt="Color manipulated banner" loading="lazy">
+    </div>
+    <div class="banner-image tint-1" style="--tint-color: {{ section.settings.color_tint_1 }};">
+      <img src="{{ section.settings.banner_image | img_url: 'master' }}" alt="Color manipulated banner" loading="lazy">
+    </div>
+    <div class="banner-image tint-2" style="--tint-color: {{ section.settings.color_tint_2 }};">
+      <img src="{{ section.settings.banner_image | img_url: 'master' }}" alt="Color manipulated banner" loading="lazy">
+    </div>
+    <div class="banner-image tint-3" style="--tint-color: {{ section.settings.color_tint_3 }};">
+      <img src="{{ section.settings.banner_image | img_url: 'master' }}" alt="Color manipulated banner" loading="lazy">
+    </div>
+  {% else %}
+    <div class="banner-placeholder">
+      <p>Please upload an image in the theme editor.</p>
+    </div>
+  {% endif %}
+</div>
+
+<style>
+  .image-color-banner {
+    width: 100%;
+    overflow: hidden;
+    position: relative;
+    display: flex;
+    align-items: center;
+    background: #f5f7fa;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  }
+
+  .banner-image {
+    flex: 1;
+    height: 100%;
+    position: relative;
+    overflow: hidden;
+    transition: opacity 0.5s ease;
+  }
+
+  .banner-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+    display: block;
+  }
+
+  /* Color Tints */
+  .banner-image.tint-1::after,
+  .banner-image.tint-2::after,
+  .banner-image.tint-3::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: var(--tint-color);
+    mix-blend-mode: overlay;
+    opacity: 0.6;
+  }
+
+  .banner-image.original {
+    filter: none;
+  }
+
+  /* Animation */
+  {% if section.settings.enable_animation %}
+  .banner    .banner-image {
+      opacity: 0.3;
+      animation: colorCycle {{ section.settings.animation_speed }}s infinite ease-in-out;
+    }
+
+    .banner-image:nth-child(1) { animation-delay: 0s; }
+    .banner-image:nth-child(2) { animation-delay: {{ section.settings.animation_speed | divided_by: 4 }}s; }
+    .banner-image:nth-child(3) { animation-delay: {{ section.settings.animation_speed | divided_by: 2 }}s; }
+    .banner-image:nth-child(4) { animation-delay: {{ section.settings.animation_speed | times: 3 | divided_by: 4 }}s; }
+
+    @keyframes colorCycle {
+      0%, 100% { opacity: 0.3; }
+      25% { opacity: 1; }
+      50% { opacity: 0.3; }
+    }
+  {% endif %}
+
+  /* Placeholder */
+  .banner-placeholder {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #e0e0e0;
+    color: #333;
+    font-family: 'Poppins', sans-serif;
+    font-size: 16px;
+    text-align: center;
+  }
+
+  /* Responsiveness */
+  @media (max-width: 768px) {
+    .image-color-banner {
+      height: {{ section.settings.banner_height | times: 0.8 }}px;
+    }
+
+    .banner-image img {
+      object-fit: cover;
+    }
+
+    .banner-placeholder {
+      font-size: 14px;
+    }
+  }
+</style>
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const banner = document.querySelector('.image-color-banner');
+    if (banner) {
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            banner.classList.add('visible');
+          }
+        });
+      }, { threshold: 0.1 });
+      observer.observe(banner);
+    }
+  });
+</script>

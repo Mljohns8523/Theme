@@ -1,0 +1,217 @@
+{% comment %}
+  Live Sales Notification Section
+  Displays animated notifications like "Barb bought [Product] in NY 3 hours ago"
+{% endcomment %}
+
+<style>
+  /* Notification container styling */
+  .notification-container {
+    position: fixed;
+    bottom: 20px;
+    left: 20px;
+    z-index: 1000;
+    font-family: {{ settings.typography_font_body | font_family }};
+  }
+
+  /* Individual notification styling */
+  .notification {
+    background-color: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    padding: 15px;
+    margin-bottom: 10px;
+    max-width: 300px;
+    display: flex;
+    align-items: center;
+    opacity: 0;
+    transform: translateX(-100%);
+    transition: all 0.5s ease-in-out;
+  }
+
+  /* Visible state for animation */
+  .notification.visible {
+    opacity: 1;
+    transform: translateX(0);
+  }
+
+  /* Product image styling */
+  .notification img {
+    width: 50px;
+    height: 50px;
+    object-fit: cover;
+    border-radius: 4px;
+    margin-right: 10px;
+  }
+
+  /* Notification text styling */
+  .notification-text {
+    font-size: 14px;
+    color: #333;
+    line-height: 1.2;
+  }
+
+  .notification-text strong {
+    color: {{ settings.color_accent }};
+  }
+
+  .notification-text .time {
+    color: #888;
+    font-size: 12px;
+  }
+
+  /* Close button */
+  .notification .close-btn {
+    margin-left: auto;
+    cursor: pointer;
+    font-size: 16px;
+    color: #888;
+  }
+
+  /* Responsive design */
+  @media (max-width: 600px) {
+    .notification {
+      max-width: 220px;
+      padding: 8px;
+    }
+
+    .notification img {
+      width: 35px;
+      height: 35px;
+    }
+
+    .notification-text {
+      font-size: 11px;
+      line-height: 1.2;
+    }
+
+    .notification-text .time {
+      font-size: 10px;
+    }
+  }
+</style>
+
+<div class="notification-container" id="notificationContainer"></div>
+
+<script>
+  // Mock data for products and customers
+  const products = [
+    {% for block in section.blocks %}
+      {
+        id: {{ block.id | json }},
+        name: {{ block.settings.product.title | json }},
+        image: {{ block.settings.product.featured_image | img_url: '50x50' | json }}
+      }{% unless forloop.last %},{% endunless %}
+    {% endfor %}
+  ];
+
+  const customers = [
+    { name: "Barb", location: "New York, NY" },
+    { name: "Alex", location: "Los Angeles, CA" },
+    { name: "Sarah", location: "Chicago, IL" },
+    { name: "Mike", location: "Miami, FL" },
+    { name: "Emma", location: "Seattle, WA" },
+    { name: "Liam", location: "Austin, TX" },
+    { name: "Olivia", location: "Boston, MA" },
+    { name: "Noah", location: "Denver, CO" },
+    { name: "Sophia", location: "Portland, OR" },
+    { name: "James", location: "San Francisco, CA" },
+    { name: "Ava", location: "Atlanta, GA" },
+    { name: "William", location: "Phoenix, AZ" }
+  ];
+
+  // Track recently used customer names to avoid repeats
+  let recentCustomers = [];
+  let intervalId = null;
+  let isRunning = true;
+
+  // Function to get a unique customer
+  function getUniqueCustomer() {
+    let availableCustomers = customers.filter(c => !recentCustomers.includes(c.name));
+    if (availableCustomers.length === 0) {
+      recentCustomers = []; // Reset if all names used
+      availableCustomers = customers;
+    }
+    const customer = availableCustomers[Math.floor(Math.random() * availableCustomers.length)];
+    recentCustomers.push(customer.name);
+    if (recentCustomers.length > 3) recentCustomers.shift(); // Keep only last 3 names
+    return customer;
+  }
+
+  // Function to generate random notification
+  function createNotification() {
+    if (!isRunning || products.length === 0) return; // Stop if disabled or no products
+    const product = products[Math.floor(Math.random() * products.length)];
+    const customer = getUniqueCustomer();
+    const hoursAgo = Math.floor(Math.random() * 24) + 1;
+
+    const notification = document.createElement("div");
+    notification.className = "notification";
+    notification.innerHTML = `
+      <img src="${product.image}" alt="${product.name}">
+      <div class="notification-text">
+        <strong>${customer.name}</strong> bought <strong>${product.name}</strong> in ${customer.location}<br>
+        <span class="time">${hoursAgo} ${hoursAgo === 1 ? "hour" : "hours"} ago</span>
+      </div>
+      <span class="close-btn">×</span>
+    `;
+
+    // Add to container
+    const container = document.getElementById("notificationContainer");
+    container.appendChild(notification);
+
+    // Trigger animation
+    setTimeout(() => {
+      notification.classList.add("visible");
+    }, 100);
+
+    // Remove notification after 10 seconds
+    setTimeout(() => {
+      notification.classList.remove("visible");
+      setTimeout(() => {
+        notification.remove();
+      }, 500);
+    }, 10000);
+
+    // Close button functionality
+    notification.querySelector(".close-btn").addEventListener("click", () => {
+      notification.classList.remove("visible");
+      setTimeout(() => {
+        notification.remove();
+      }, 500);
+      isRunning = false; // Stop notifications
+      clearInterval(intervalId); // Clear the interval
+    });
+  }
+
+  // Start notifications if products are available
+  if (products.length > 0) {
+    createNotification(); // Show first notification immediately
+    intervalId = setInterval(createNotification, 15500); // 10s display + 0.5s fade + 5s delay
+  }
+</script>
+
+{% schema %}
+{
+  "name": "Sales Notification",
+  "settings": [],
+  "blocks": [
+    {
+      "type": "product",
+      "name": "Product",
+      "settings": [
+        {
+          "type": "product",
+          "id": "product",
+          "label": "Select Product"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Sales Notification",
+      "blocks": []
+    }
+  ]
+}
+{% endschema %}

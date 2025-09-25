@@ -1,0 +1,121 @@
+{% comment %}
+  Hot Product Badge Section
+  Displays a pulsing badge with customizable text, colors, and visibility based on product tags.
+{% endcomment %}
+
+<style>
+  .hot-product-badge-{{ section.id }} {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 2px 10px;
+    margin: 0;
+    background-color: {{ section.settings.background_color }};
+    color: {{ section.settings.text_color }};
+    font-weight: 600;
+    font-size: 13px;
+    border-radius: 5px;
+    border: 2px solid {{ section.settings.border_color }};
+    box-shadow: 0 0 6px rgba({{ section.settings.border_color | color_extract: 'red' }}, {{ section.settings.border_color | color_extract: 'green' }}, {{ section.settings.border_color | color_extract: 'blue' }}, 0.5);
+    animation: borderPulse-{{ section.id }} 1.5s infinite;
+    line-height: 1;
+  }
+
+  .hot-product-badge-{{ section.id }} .dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background-color: {{ section.settings.dot_color }};
+    box-shadow: 0 0 0 rgba({{ section.settings.dot_color | color_extract: 'red' }}, {{ section.settings.dot_color | color_extract: 'green' }}, {{ section.settings.dot_color | color_extract: 'blue' }}, 0.7);
+    animation: pulseDot-{{ section.id }} 1.2s infinite;
+    flex-shrink: 0;
+  }
+
+  @keyframes pulseDot-{{ section.id }} {
+    0% {
+      transform: scale(1);
+      box-shadow: 0 0 0 0 rgba({{ section.settings.dot_color | color_extract: 'red' }}, {{ section.settings.dot_color | color_extract: 'green' }}, {{ section.settings.dot_color | color_extract: 'blue' }}, 0.7);
+    }
+    70% {
+      transform: scale(1.4);
+      box-shadow: 0 0 0 8px rgba({{ section.settings.dot_color | color_extract: 'red' }}, {{ section.settings.dot_color | color_extract: 'green' }}, {{ section.settings.dot_color | color_extract: 'blue' }}, 0);
+    }
+    100% {
+      transform: scale(1);
+      box-shadow: 0 0 0 0 rgba({{ section.settings.dot_color | color_extract: 'red' }}, {{ section.settings.dot_color | color_extract: 'green' }}, {{ section.settings.dot_color | color_extract: 'blue' }}, 0);
+    }
+  }
+
+  @keyframes borderPulse-{{ section.id }} {
+    0%, 100% {
+      box-shadow: 0 0 6px rgba({{ section.settings.border_color | color_extract: 'red' }}, {{ section.settings.border_color | color_extract: 'green' }}, {{ section.settings.border_color | color_extract: 'blue' }}, 0.6), 0 0 10px rgba({{ section.settings.border_color | color_extract: 'red' }}, {{ section.settings.border_color | color_extract: 'green' }}, {{ section.settings.border_color | color_extract: 'blue' }}, 0.4);
+    }
+    50% {
+      box-shadow: 0 0 10px rgba({{ section.settings.border_color | color_extract: 'red' }}, {{ section.settings.border_color | color_extract: 'green' }}, {{ section.settings.border_color | color_extract: 'blue' }}, 1), 0 0 16px rgba({{ section.settings.border_color | color_extract: 'red' }}, {{ section.settings.border_color | color_extract: 'green' }}, {{ section.settings.border_color | color_extract: 'blue' }}, 0.7);
+    }
+  }
+</style>
+
+{% if section.settings.show_hot_badge and product.tags contains section.settings.tag_trigger %}
+  <div class="hot-product-badge-{{ section.id }}">
+    <span class="dot"></span>
+    {{ section.settings.badge_text }}
+  </div>
+{% endif %}
+
+{% schema %}
+{
+  "name": "Hot Product Badge",
+  "settings": [
+    {
+      "type": "checkbox",
+      "id": "show_hot_badge",
+      "label": "Show Hot Product Badge",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "badge_text",
+      "label": "Badge Text",
+      "default": "HOT PRODUCT"
+    },
+    {
+      "type": "text",
+      "id": "tag_trigger",
+      "label": "Product Tag to Show Badge",
+      "default": "hot",
+      "info": "Badge will only show on products with this tag."
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Background Color",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text Color",
+      "default": "#FF1A1A"
+    },
+    {
+      "type": "color",
+      "id": "border_color",
+      "label": "Border Color",
+      "default": "#FF1A1A"
+    },
+    {
+      "type": "color",
+      "id": "dot_color",
+      "label": "Dot Color",
+      "default": "#FF1A1A"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Hot Product Badge"
+    }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,573 @@
+{% comment %}
+  Product Highlights Section for Titan Theme
+  Modern, conversion-focused section inspired by beastbites.com.
+  Features: Centered header with customizable size for desktop and mobile, centered image, 2x2 feature grid (desktop) or stacked (mobile), trust badge, CTA.
+  Includes customizable feature boxes with colored backgrounds, 10px margins, editable background color, adjustable text line height, and adjustable trust icon size.
+{% endcomment %}
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link
+  href="https://fonts.googleapis.com/css2?family=Montserrat:wght@900&family=DM+Sans:wght@400;500;700&display=swap?v=20250518"
+  rel="stylesheet"
+>
+<link
+  href="https://fonts.googleapis.com/icon?family=Material+Symbols+Outlined&v=20250518"
+  rel="stylesheet"
+  onload="console.log('Google Material Icons loaded')"
+  onerror="console.error('Google Material Icons failed to load')"
+>
+
+<style>
+  .product-highlights {
+    background: var(--background-color, #ffffff);
+    padding: 80px 0;
+    font-family: 'DM Sans', sans-serif;
+    overflow: hidden;
+    text-align: center;
+  }
+
+  .product-highlights__container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 40px;
+  }
+
+  .product-title {
+    font-weight: 900;
+    color: var(--header-color, #ffffff);
+    margin: 0 auto;
+    width: 100%;
+    max-width: 800px;
+    line-height: 1.2;
+    letter-spacing: -0.02em;
+    display: flex;
+    justify-content: center;
+    text-align: center;
+  }
+
+  .product-title--desktop {
+    font-size: var(--header-size-desktop, 48px);
+  }
+
+  .product-title--mobile {
+    font-size: var(--header-size-mobile, 32px);
+  }
+
+  .product-highlights__image {
+    max-width: 600px;
+    width: 100%;
+    border-radius: 20px;
+    overflow: hidden;
+  }
+
+  .product-image {
+    width: 100%;
+    height: auto;
+    border-radius: 20px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    transition: transform 0.5s ease, box-shadow 0.5s ease;
+  }
+
+  .product-image:hover {
+    transform: scale(1.1);
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3);
+  }
+
+  .placeholder-image {
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    background: linear-gradient(45deg, #e0e0e0, #f0f0f0);
+    border-radius: 20px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+  }
+
+  .product-highlights__features {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+    width: 100%;
+    max-width: 900px;
+    margin: 0 auto;
+  }
+
+  .feature-box {
+    background: var(--feature-bg, #ffffff);
+    border-radius: 15px;
+    padding: 20px;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+    transition: transform 0.4s ease, box-shadow 0.4s ease, background 0.3s ease;
+    margin: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    backdrop-filter: blur(5px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+  }
+
+  .feature-box:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 12px 35px rgba(0, 0, 0, 0.25);
+    background: var(--feature-hover-bg, #f8f8f8);
+  }
+
+  .feature-item {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 15px;
+  }
+
+  .feature-icon {
+    font-size: 32px;
+    color: var(--feature-icon-color, #ff6b6b);
+    transition: color 0.3s ease;
+  }
+
+  .feature-text {
+    font-size: 22px;
+    color: var(--feature-text-color, #1a1a1a);
+    font-weight: 600;
+    margin: 0;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    line-height: var(--feature-line-height, 1.5);
+  }
+
+  .product-highlights__content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 25px;
+  }
+
+  .trust-badge {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 20px;
+    color: #ffffff;
+    font-weight: 600;
+    background: rgba(255, 255, 255, 0.1);
+    padding: 10px 20px;
+    border-radius: 25px;
+    backdrop-filter: blur(5px);
+  }
+
+  .trust-icon {
+    font-size: var(--trust-icon-size, 26px);
+    color: #ffd700;
+  }
+
+  .cta-button {
+    display: inline-block;
+    padding: 18px 40px;
+    font-size: 22px;
+    font-weight: 700;
+    color: #ffffff;
+    background: linear-gradient(90deg, #ff6b6b, #ff8e53);
+    border-radius: 30px;
+    text-decoration: none;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    box-shadow: 0 8px 20px rgba(255, 107, 107, 0.4);
+    transition: transform 0.4s ease, box-shadow 0.4s ease, background 0.3s ease;
+  }
+
+  .cta-button:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 12px 30px rgba(255, 107, 107, 0.6);
+    background: linear-gradient(90deg, #ff8e53, #ff6b6b);
+  }
+
+  @media (max-width: 767px) {
+    .product-highlights {
+      padding: 40px 0;
+    }
+
+    .product-highlights__container {
+      gap: 30px;
+      padding: 0 15px;
+    }
+
+    .product-title {
+      font-size: var(--header-size-mobile, 32px);
+      max-width: 90%;
+    }
+
+    .product-highlights__features {
+      grid-template-columns: 1fr;
+      gap: 15px;
+    }
+
+    .feature-box {
+      padding: 15px;
+    }
+
+    .feature-text {
+      font-size: 18px;
+      line-height: var(--feature-line-height, 1.4);
+    }
+
+    .trust-badge {
+      font-size: 16px;
+      padding: 8px 15px;
+    }
+
+    .trust-icon {
+      font-size: var(--trust-icon-size, 22px);
+    }
+
+    .cta-button {
+      padding: 12px 30px;
+      font-size: 18px;
+    }
+  }
+
+  @media (min-width: 768px) {
+    .product-title {
+      font-size: var(--header-size-desktop, 48px);
+    }
+
+    .benefits-image-wrapper {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 30px;
+      width: 100%;
+      max-width: 900px;
+    }
+
+    .product-highlights__left-benefits,
+    .product-highlights__right-benefits {
+      flex: 1;
+      max-width: 250px;
+    }
+  }
+
+  @keyframes fadeInUp {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .feature-box { animation: fadeInUp 0.6s ease-out; }
+</style>
+
+{%- liquid
+  assign fetch_priority = 'auto'
+  if section.index <= 2
+    assign fetch_priority = 'high'
+  endif
+-%}
+
+<section
+  class="product-highlights"
+  id="ProductHighlights-{{ section.id }}"
+  style="--background-color: {{ section.settings.background_color }}; --header-color: {{ section.settings.header_color }}; --header-size-desktop: {{ section.settings.header_size_desktop }}px; --header-size-mobile: {{ section.settings.header_size_mobile }}px; --trust-icon-size: {{ section.settings.trust_icon_size }}px"
+>
+  <div class="product-highlights__container">
+    {% if section.settings.title != blank %}
+      <h2 class="product-title product-title--desktop product-title--mobile">{{ section.settings.title | escape }}</h2>
+    {% endif %}
+
+    <div class="benefits-image-wrapper">
+      <div class="product-highlights__left-benefits">
+        {% for block in section.blocks %}
+          {% if block.type == 'feature' and block.settings.feature_text != blank %}
+            {% assign block_index = forloop.index0 %}
+            {% if block_index < 2 %}
+              <div
+                class="feature-box"
+                style="
+                  --feature-bg: {{ block.settings.feature_bg }};
+                  --feature-hover-bg: {{ block.settings.feature_hover_bg }};
+                  --feature-icon-color: {{ block.settings.feature_icon_color }};
+                  --feature-text-color: {{ block.settings.feature_text_color }};
+                  --feature-line-height: {{ block.settings.feature_line_height }};
+                "
+              >
+                <div class="feature-item">
+                  {% if block.settings.feature_icon != blank %}
+                    <span class="material-symbols-outlined feature-icon">{{ block.settings.feature_icon }}</span>
+                  {% endif %}
+                  <span class="feature-text">{{ block.settings.feature_text | escape }}</span>
+                </div>
+              </div>
+            {% endif %}
+          {% endif %}
+        {% endfor %}
+      </div>
+
+      <div class="product-highlights__image">
+        {% if section.settings.product_image != blank %}
+          <img
+            src="{{ section.settings.product_image | image_url: width: 1000 }}"
+            alt="{{ section.settings.image_alt | escape }}"
+            class="product-image"
+            widths="300, 500, 700, 1000"
+            sizes="(max-width: 767px) 100vw, 500px"
+            fetchpriority="{{ fetch_priority }}"
+            loading="eager"
+            id="ProductImage-{{ section.id }}"
+          >
+        {% else %}
+          <div class="placeholder-image"></div>
+        {% endif %}
+      </div>
+
+      <div class="product-highlights__right-benefits">
+        {% for block in section.blocks %}
+          {% if block.type == 'feature' and block.settings.feature_text != blank %}
+            {% assign block_index = forloop.index0 %}
+            {% if block_index >= 2 %}
+              <div
+                class="feature-box"
+                style="
+                  --feature-bg: {{ block.settings.feature_bg }};
+                  --feature-hover-bg: {{ block.settings.feature_hover_bg }};
+                  --feature-icon-color: {{ block.settings.feature_icon_color }};
+                  --feature-text-color: {{ block.settings.feature_text_color }};
+                  --feature-line-height: {{ block.settings.feature_line_height }};
+                "
+              >
+                <div class="feature-item">
+                  {% if block.settings.feature_icon != blank %}
+                    <span class="material-symbols-outlined feature-icon">{{ block.settings.feature_icon }}</span>
+                  {% endif %}
+                  <span class="feature-text">{{ block.settings.feature_text | escape }}</span>
+                </div>
+              </div>
+            {% endif %}
+          {% endif %}
+        {% endfor %}
+      </div>
+    </div>
+
+    <div class="product-highlights__content">
+      {% if section.settings.trust_text != blank %}
+        <div class="trust-badge">
+          {% if section.settings.trust_icon != blank %}
+            <span class="material-symbols-outlined trust-icon">{{ section.settings.trust_icon }}</span>
+          {% endif %}
+          <span>{{ section.settings.trust_text | escape }}</span>
+        </div>
+      {% endif %}
+      {% if section.settings.cta_text != blank and section.settings.cta_url != blank %}
+        <a href="{{ section.settings.cta_url }}" class="cta-button">{{ section.settings.cta_text | escape }}</a>
+      {% endif %}
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Product Highlights",
+  "tag": "section",
+  "class": "section",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Section Settings"
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Title",
+      "default": "Unleash the Power"
+    },
+    {
+      "type": "color",
+      "id": "header_color",
+      "label": "Header Color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "range",
+      "id": "header_size_desktop",
+      "label": "Header Size (Desktop)",
+      "min": 24,
+      "max": 72,
+      "step": 1,
+      "default": 48
+    },
+    {
+      "type": "range",
+      "id": "header_size_mobile",
+      "label": "Header Size (Mobile)",
+      "min": 16,
+      "max": 48,
+      "step": 1,
+      "default": 32
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Background Color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "image_picker",
+      "id": "product_image",
+      "label": "Product Image"
+    },
+    {
+      "type": "text",
+      "id": "image_alt",
+      "label": "Image Alt Text",
+      "default": "Featured product"
+    },
+    {
+      "type": "text",
+      "id": "trust_text",
+      "label": "Trust Badge Text",
+      "default": "Rated 4.9/5 by 2,000+ Customers"
+    },
+    {
+      "type": "text",
+      "id": "trust_icon",
+      "label": "Trust Icon",
+      "default": "star",
+      "info": "Use Google Material Icons (e.g., star, verified)"
+    },
+    {
+      "type": "range",
+      "id": "trust_icon_size",
+      "label": "Trust Icon Size",
+      "min": 16,
+      "max": 40,
+      "step": 1,
+      "default": 26
+    },
+    {
+      "type": "text",
+      "id": "cta_text",
+      "label": "CTA Text",
+      "default": "Get Yours Now"
+    },
+    {
+      "type": "url",
+      "id": "cta_url",
+      "label": "CTA URL"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "feature",
+      "name": "Feature",
+      "settings": [
+        {
+          "type": "text",
+          "id": "feature_text",
+          "label": "Feature Text",
+          "default": "Unmatched Quality"
+        },
+        {
+          "type": "text",
+          "id": "feature_icon",
+          "label": "Feature Icon",
+          "default": "check",
+          "info": "Use Google Material Icons (e.g., check, local_shipping)"
+        },
+        {
+          "type": "color",
+          "id": "feature_bg",
+          "label": "Background Color",
+          "default": "#ffffff"
+        },
+        {
+          "type": "color",
+          "id": "feature_hover_bg",
+          "label": "Hover Background Color",
+          "default": "#f8f8f8"
+        },
+        {
+          "type": "color",
+          "id": "feature_icon_color",
+          "label": "Icon Color",
+          "default": "#ff6b6b"
+        },
+        {
+          "type": "color",
+          "id": "feature_text_color",
+          "label": "Text Color",
+          "default": "#1a1a1a"
+        },
+        {
+          "type": "range",
+          "id": "feature_line_height",
+          "label": "Text Line Height",
+          "min": 1.0,
+          "max": 2.0,
+          "step": 0.1,
+          "default": 1.5
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Product Highlights",
+      "blocks": [
+        {
+          "type": "feature",
+          "settings": {
+            "feature_text": "Unmatched Quality",
+            "feature_icon": "check",
+            "feature_bg": "#ffffff",
+            "feature_hover_bg": "#f8f8f8",
+            "feature_icon_color": "#ff6b6b",
+            "feature_text_color": "#1a1a1a",
+            "feature_line_height": 1.5
+          }
+        },
+        {
+          "type": "feature",
+          "settings": {
+            "feature_text": "Lightning-Fast Shipping",
+            "feature_icon": "local_shipping",
+            "feature_bg": "#ffffff",
+            "feature_hover_bg": "#f8f8f8",
+            "feature_icon_color": "#ff6b6b",
+            "feature_text_color": "#1a1a1a",
+            "feature_line_height": 1.5
+          }
+        },
+        {
+          "type": "feature",
+          "settings": {
+            "feature_text": "Hassle-Free Returns",
+            "feature_icon": "replay",
+            "feature_bg": "#ffffff",
+            "feature_hover_bg": "#f8f8f8",
+            "feature_icon_color": "#ff6b6b",
+            "feature_text_color": "#1a1a1a",
+            "feature_line_height": 1.5
+          }
+        },
+        {
+          "type": "feature",
+          "settings": {
+            "feature_text": "Loved by 10K+",
+            "feature_icon": "favorite",
+            "feature_bg": "#ffffff",
+            "feature_hover_bg": "#f8f8f8",
+            "feature_icon_color": "#ff6b6b",
+            "feature_text_color": "#1a1a1a",
+            "feature_line_height": 1.5
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

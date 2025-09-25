@@ -1,0 +1,175 @@
+{% schema %}
+{
+  "name": "Product Availability Map",
+  "settings": [
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Section Heading",
+      "default": "Product Availability"
+    },
+    {
+      "type": "range",
+      "id": "heading_size_desktop",
+      "label": "Heading Font Size (Desktop)",
+      "min": 16,
+      "max": 48,
+      "step": 2,
+      "unit": "px",
+      "default": 28
+    },
+    {
+      "type": "range",
+      "id": "heading_size_mobile",
+      "label": "Heading Font Size (Mobile)",
+      "min": 14,
+      "max": 36,
+      "step": 2,
+      "unit": "px",
+      "default": 24
+    },
+    {
+      "type": "color",
+      "id": "heading_color",
+      "label": "Heading Color",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "select",
+      "id": "highlight_color",
+      "label": "Available States Highlight Color",
+      "options": [
+        {
+          "value": "#2ECC71",
+          "label": "Green"
+        },
+        {
+          "value": "#3498DB",
+          "label": "Blue"
+        },
+        {
+          "value": "#E74C3C",
+          "label": "Red"
+        },
+        {
+          "value": "#F1C40F",
+          "label": "Yellow"
+        }
+      ],
+      "default": "#2ECC71"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_state_labels",
+      "label": "Show State Labels",
+      "default": true
+    },
+    {
+      "type": "textarea",
+      "id": "available_states",
+      "label": "Available States (comma-separated, e.g., CA,NY,TX)",
+      "default": "CA,NY,TX",
+      "info": "Enter two-letter state codes (e.g., CA for California). See https://www.50states.com/abbreviations.htm for codes."
+    }
+  ],
+  "presets": [
+    {
+      "name": "Product Availability Map"
+    }
+  ]
+}
+{% endschema %}
+
+<style>
+  .product-availability-map {
+    padding: 40px 20px;
+    background-color: #000000;
+    text-align: center;
+  }
+  .product-availability-map__heading {
+    font-size: {{ section.settings.heading_size_desktop }}px;
+    font-weight: 600;
+    margin-bottom: 20px;
+    color: {{ section.settings.heading_color }};
+  }
+  .product-availability-map__map-container {
+    max-width: 800px;
+    margin: 0 auto;
+    position: relative;
+  }
+  .product-availability-map__svg {
+    width: 100%;
+    height: auto;
+    background-color: #000000;
+  }
+  .product-availability-map__svg path {
+    fill: #333333;
+    stroke: #FFFFFF;
+    stroke-width: 0.5;
+    transition: fill 0.3s ease;
+  }
+  .product-availability-map__svg path.available {
+    fill: {{ section.settings.highlight_color }};
+  }
+  .product-availability-map__label {
+    fill: #FFFFFF;
+    font-size: 10px;
+    font-family: Arial, sans-serif;
+    pointer-events: none;
+  }
+  @media (max-width: 767px) {
+    .product-availability-map__heading {
+      font-size: {{ section.settings.heading_size_mobile }}px;
+    }
+    .product-availability-map__label {
+      font-size: 8px;
+    }
+  }
+</style>
+
+<section class="product-availability-map">
+  {% if section.settings.heading != blank %}
+    <h2 class="product-availability-map__heading">{{ section.settings.heading | escape }}</h2>
+  {% endif %}
+
+  <div class="product-availability-map__map-container">
+    <svg class="product-availability-map__svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 959 593">
+      <!-- Simplified U.S. States SVG (subset for brevity; full SVG would include all states) -->
+      <g id="us-map">
+        <path id="AL" d="M662,312..."/>
+        <path id="AK" d="M196,436..."/>
+        <path id="AZ" d="M324,326..."/>
+        <path id="AR" d="M612,288..."/>
+        <path id="CA" d="M242,226..."/>
+        <path id="NY" d="M790,120..."/>
+        <path id="TX" d="M542,356..."/>
+        <!-- Add remaining state paths here -->
+      </g>
+      {% if section.settings.show_state_labels %}
+        <g id="state-labels">
+          <text class="product-availability-map__label" x="662" y="312">AL</text>
+          <text class="product-availability-map__label" x="196" y="436">AK</text>
+          <text class="product-availability-map__label" x="324" y="326">AZ</text>
+          <text class="product-availability-map__label" x="612" y="288">AR</text>
+          <text class="product-availability-map__label" x="242" y="226">CA</text>
+          <text class="product-availability-map__label" x="790" y="120">NY</text>
+          <text class="product-availability-map__label" x="542" y="356">TX</text>
+          <!-- Add remaining state labels here -->
+        </g>
+      {% endif %}
+    </svg>
+  </div>
+</section>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const availableStates = "{{ section.settings.available_states | strip | upcase | split: ',' }}".split(',').map(state => state.trim());
+    const svg = document.querySelector('.product-availability-map__svg');
+    availableStates.forEach(state => {
+      const statePath = svg.querySelector(`#${state}`);
+      if (statePath) {
+        statePath.classList.add('available');
+      }
+    });
+  });
+</script>

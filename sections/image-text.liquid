@@ -1,0 +1,465 @@
+{% comment %}
+  Image and Text Section
+  Displays a square image and header/description, with option to flip horizontally.
+  Vibrant, customizable design inspired by beastbites.com.
+  Uses Montserrat Black for headers, DM Sans for body, Font Awesome for icons.
+  Responsive, accessible, with optional animation and CTA button.
+  Updated to fix "image-text.css failed to load" with fallback inline styles.
+  Ensures mobile vertical stacking with customizable image width, gap, and position.
+{% endcomment %}
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link
+  href="https://fonts.googleapis.com/css2?family=Montserrat:wght@900&family=DM+Sans:wght@400;500;700&display=swap"
+  rel="stylesheet"
+  onload="console.log('Google Fonts loaded')"
+  onerror="console.error('Google Fonts failed to load')"
+>
+<link
+  rel="stylesheet"
+  href="https://use.fontawesome.com/releases/v6.5.2/css/all.css"
+  integrity="sha384-4LISRrVgo4JZwAkP/2CY2vOTNp2U4g2fEI5E+nDQo2GbZ7uD6lsv1u1mKab7j8BR"
+  crossorigin="anonymous"
+  onload="console.log('Font Awesome loaded')"
+  onerror="console.error('Font Awesome failed to load')"
+>
+
+{{ 'image-text.css' | asset_url | stylesheet_tag: load: true, id: 'image-text-styles' }}
+
+<section
+  class="image-text image-text-{{ section.id }} color-{{ section.settings.color_scheme }} gradient section-{{ section.id }}-padding"
+  style="
+    --primary-color: {{ section.settings.primary_color | default: '#FF5733' }};
+    --highlight-color: {{ section.settings.highlight_color | default: '#E04E2D' }};
+    --text-color: {{ section.settings.text_color | default: '#2E2A39' }};
+    --background-color: {{ section.settings.background_color | default: '#FFFFFF' }};
+    --header-font-size: {{ section.settings.header_font_size | divided_by: 10.0 | default: 3.2 }}rem;
+    --description-font-size: {{ section.settings.description_font_size | divided_by: 10.0 | default: 1.6 }}rem;
+    --padding-top: {{ section.settings.padding_top | default: 40 }}px;
+    --padding-bottom: {{ section.settings.padding_bottom | default: 40 }}px;
+    --image-border-radius: {{ section.settings.image_border_radius | default: 12 }}px;
+    --image-border: {{ section.settings.image_border | default: 'none' }};
+    --image-shadow: {{ section.settings.image_shadow | default: '0 4px 12px rgba(0,0,0,0.1)' }};
+    --mobile-image-width: {{ section.settings.mobile_image_width | default: 100 }}%;
+    --mobile-gap: {{ section.settings.mobile_gap | default: 20 }}px;
+    background-color: var(--background-color);
+    color: var(--text-color);
+    font-family: 'DM Sans', sans-serif;
+    min-height: 200px;
+  "
+>
+  <div class="page-width">
+    <div
+      class="image-text__container {{ section.settings.layout_direction }} {{ section.settings.content_alignment }}"
+      data-animation="{{ section.settings.animation_type }}"
+      style="display: flex; align-items: center; gap: 2rem; opacity: 1;"
+    >
+      <div class="image-text__image {{ section.settings.mobile_image_position }}" style="flex: 1; max-width: 50%;">
+        {% if section.settings.image != blank %}
+          <img
+            src="{{ section.settings.image | image_url: width: 800 }}"
+            alt="{{ section.settings.image.alt | escape | default: 'Section image' }}"
+            class="image-text__img"
+            style="width: 100%; height: auto; aspect-ratio: 1/1; object-fit: cover; border-radius: var(--image-border-radius);"
+            width="100%"
+            height="100%"
+            loading="lazy"
+          >
+        {% else %}
+          <div
+            class="image-text__placeholder"
+            style="width: 100%; aspect-ratio: 1/1; background: #f0f0f0; text-align: center; color: #666;"
+          >
+            {{ 'image' | placeholder_svg_tag: 'placeholder-svg' }}
+            <span class="image-text__placeholder-text">Upload an image in Theme Editor</span>
+          </div>
+        {% endif %}
+      </div>
+      <div class="image-text__content" style="flex: 1;">
+        {% if section.settings.header != blank %}
+          <h2
+            class="image-text__header"
+            style="font-family: 'Montserrat', sans-serif; font-weight: 900; font-size: var(--header-font-size); color: var(--text-color); margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem;"
+          >
+            {% if section.settings.icon != blank %}
+              <i
+                class="fa-solid {{ section.settings.icon }} image-text__icon"
+                style="color: var(--primary-color);"
+                aria-hidden="true"
+              ></i>
+            {% endif %}
+            {{ section.settings.header }}
+          </h2>
+        {% else %}
+          <h2
+            class="image-text__header"
+            style="font-family: 'Montserrat', sans-serif; font-weight: 900; font-size: var(--header-font-size); color: var(--text-color);"
+          >
+            Add a Header
+          </h2>
+        {% endif %}
+        {% if section.settings.description != blank %}
+          <div
+            class="image-text__description"
+            style="font-size: var(--description-font-size); line-height: 1.6; color: var(--text-color); margin-bottom: 1.5rem;"
+          >
+            {{ section.settings.description }}
+          </div>
+        {% else %}
+          <div
+            class="image-text__description"
+            style="font-size: var(--description-font-size); line-height: 1.6; color: var(--text-color);"
+          >
+            Add a description in Theme Editor.
+          </div>
+        {% endif %}
+        {% if section.settings.cta_text != blank and section.settings.cta_link != blank %}
+          <a
+            href="{{ section.settings.cta_link }}"
+            class="image-text__cta button button--primary"
+            style="display: inline-block; padding: 0.75rem 2rem; background: var(--primary-color); color: #FFFFFF; text-decoration: none; border-radius: 8px; font-weight: 700;"
+          >
+            {{ section.settings.cta_text }}
+          </a>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const container = document.querySelector('.image-text-{{ section.id }} .image-text__container');
+    if (!container) {
+      console.error('Image and Text container not found for section {{ section.id }}');
+      return;
+    }
+
+    // Force visibility
+    container.style.opacity = '1';
+    container.classList.add('animate');
+
+    // Animation
+    const animation = container.dataset.animation;
+    if (animation !== 'none') {
+      console.log('Animation triggered for section {{ section.id }}:', animation);
+    } else {
+      console.log('No animation set for section {{ section.id }}');
+    }
+
+    // Debug Font Awesome icon
+    const icon = document.querySelector('.image-text-{{ section.id }} .image-text__icon');
+    if ('{{ section.settings.icon }}' && !icon) {
+      console.error('Font Awesome icon "{{ section.settings.icon }}" not loaded');
+    }
+
+    // Debug image
+    const img = document.querySelector('.image-text-{{ section.id }} .image-text__img');
+    if ('{{ section.settings.image }}' && !img) {
+      console.error('Image not loaded for section {{ section.id }}');
+    }
+
+    // Debug CSS
+    const css = document.getElementById('image-text-styles');
+    if (!css) {
+      console.error('image-text.css not loaded for section {{ section.id }}. Please add image-text.css to Assets.');
+      container.insertAdjacentHTML('beforebegin', '<div style="color: red; padding: 10px; background: #fff; border: 1px solid red; margin-bottom: 10px;">Error: image-text.css failed to load. Please add image-text.css to Assets in Shopify Admin > Themes > Edit Code > Assets.</div>');
+    } else {
+      console.log('image-text.css loaded successfully for section {{ section.id }}');
+    }
+  });
+</script>
+
+{% schema %}
+{
+  "name": "Image and Text",
+  "class": "section-image-text",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Content",
+      "info": "Ensure all fields are filled to avoid empty sections."
+    },
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": "Image",
+      "info": "Upload a square image (e.g., 800x800px) for best results."
+    },
+    {
+      "type": "text",
+      "id": "header",
+      "label": "Header",
+      "default": "Our Promise",
+      "info": "Enter a bold header to highlight your message."
+    },
+    {
+      "type": "textarea",
+      "id": "description",
+      "label": "Description",
+      "default": "Discover the power of our premium products, crafted with care to deliver unmatched quality and results.",
+      "info": "Provide a compelling description."
+    },
+    {
+      "type": "text",
+      "id": "icon",
+      "label": "Font Awesome Icon",
+      "info": "Enter Font Awesome icon class (e.g., fa-star). See fontawesome.com/icons. Leave blank for no icon.",
+      "default": "fa-check"
+    },
+    {
+      "type": "header",
+      "content": "CTA Button",
+      "info": "Add a call-to-action button to drive engagement."
+    },
+    {
+      "type": "text",
+      "id": "cta_text",
+      "label": "CTA Button Text",
+      "default": "Shop Now"
+    },
+    {
+      "type": "url",
+      "id": "cta_link",
+      "label": "CTA Button Link",
+      "info": "Set a link (e.g., /collections/all)."
+    },
+    {
+      "type": "header",
+      "content": "Layout"
+    },
+    {
+      "type": "select",
+      "id": "layout_direction",
+      "options": [
+        { "value": "image-left", "label": "Image Left" },
+        { "value": "image-right", "label": "Image Right" }
+      ],
+      "default": "image-left",
+      "label": "Layout Direction (Desktop)",
+      "info": "Choose whether the image appears on the left or right on desktop."
+    },
+    {
+      "type": "select",
+      "id": "content_alignment",
+      "options": [
+        { "value": "left", "label": "Left" },
+        { "value": "center", "label": "Center" },
+        { "value": "right", "label": "Right" }
+      ],
+      "default": "left",
+      "label": "Content Alignment (Desktop)"
+    },
+    {
+      "type": "select",
+      "id": "mobile_layout",
+      "options": [
+        { "value": "column", "label": "Image Above Text" },
+        { "value": "column-reverse", "label": "Text Above Image" }
+      ],
+      "default": "column",
+      "label": "Mobile Layout",
+      "info": "Choose stacking order for mobile devices."
+    },
+    {
+      "type": "select",
+      "id": "mobile_content_alignment",
+      "options": [
+        { "value": "left", "label": "Left" },
+        { "value": "center", "label": "Center" },
+        { "value": "right", "label": "Right" }
+      ],
+      "default": "center",
+      "label": "Content Alignment (Mobile)"
+    },
+    {
+      "type": "select",
+      "id": "mobile_image_position",
+      "options": [
+        { "value": "center", "label": "Center" },
+        { "value": "left", "label": "Left" },
+        { "value": "right", "label": "Right" }
+      ],
+      "default": "center",
+      "label": "Image Position (Mobile)",
+      "info": "Choose how the image is aligned on mobile."
+    },
+    {
+      "type": "range",
+      "id": "mobile_image_width",
+      "label": "Mobile Image Width",
+      "min": 50,
+      "max": 100,
+      "step": 5,
+      "unit": "%",
+      "default": 100,
+      "info": "Set the image width on mobile."
+    },
+    {
+      "type": "range",
+      "id": "mobile_gap",
+      "label": "Mobile Gap",
+      "min": 0,
+      "max": 50,
+      "step": 2,
+      "unit": "px",
+      "default": 20,
+      "info": "Set the spacing between image and text on mobile."
+    },
+    {
+      "type": "header",
+      "content": "Styling",
+      "info": "Customize colors and styling for a vibrant look."
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "Color Scheme",
+      "default": "background-1",
+      "info": "Select a theme color scheme or use custom colors below."
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Background Color",
+      "default": "#FFFFFF",
+      "info": "Set the section background color."
+    },
+    {
+      "type": "color",
+      "id": "primary_color",
+      "label": "Primary Color (Button, Icon)",
+      "default": "#FF5733"
+    },
+    {
+      "type": "color",
+      "id": "highlight_color",
+      "label": "Highlight Color (Hover)",
+      "default": "#E04E2D"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text Color",
+      "default": "#2E2A39",
+      "info": "Ensure contrast against background (avoid white)."
+    },
+    {
+      "type": "range",
+      "id": "header_font_size",
+      "label": "Header Font Size",
+      "min": 16,
+      "max": 100,
+      "step": 2,
+      "unit": "px",
+      "default": 32
+    },
+    {
+      "type": "range",
+      "id": "description_font_size",
+      "label": "Description Font Size",
+      "min": 12,
+      "max": 24,
+      "step": 1,
+      "unit": "px",
+      "default": 16
+    },
+    {
+      "type": "range",
+      "id": "image_border_radius",
+      "label": "Image Border Radius",
+      "min": 0,
+      "max": 50,
+      "step": 2,
+      "unit": "px",
+      "default": 12
+    },
+    {
+      "type": "text",
+      "id": "image_border",
+      "label": "Image Border",
+      "default": "none",
+      "info": "E.g., '1px solid #000'"
+    },
+    {
+      "type": "text",
+      "id": "image_shadow",
+      "label": "Image Shadow",
+      "default": "0 4px 12px rgba(0,0,0,0.1)",
+      "info": "E.g., '0 4px 12px rgba(0,0,0,0.1)'"
+    },
+    {
+      "type": "header",
+      "content": "Animation",
+      "info": "Choose an animation for the section."
+    },
+    {
+      "type": "select",
+      "id": "animation_type",
+      "options": [
+        { "value": "none", "label": "None" },
+        { "value": "fade-in", "label": "Fade In" },
+        { "value": "slide-in", "label": "Slide In" }
+      ],
+      "default": "fade-in",
+      "label": "Animation Type"
+    },
+    {
+      "type": "header",
+      "content": "Padding"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "label": "Padding Top",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "default": 40
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "label": "Padding Bottom",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "default": 40
+    }
+  ],
+  "presets": [
+    {
+      "name": "Image and Text",
+      "settings": {
+        "header": "Our Promise",
+        "description": "Discover the power of our premium products, crafted with care to deliver unmatched quality and results.",
+        "cta_text": "Shop Now",
+        "cta_link": "/collections/all",
+        "icon": "fa-check",
+        "layout_direction": "image-left",
+        "content_alignment": "left",
+        "mobile_layout": "column",
+        "mobile_content_alignment": "center",
+        "mobile_image_position": "center",
+        "mobile_image_width": 100,
+        "mobile_gap": 20,
+        "background_color": "#FFFFFF",
+        "primary_color": "#FF5733",
+        "highlight_color": "#E04E2D",
+        "text_color": "#2E2A39",
+        "animation_type": "fade-in",
+        "header_font_size": 32,
+        "description_font_size": 16,
+        "image_border_radius": 12,
+        "image_border": "none",
+        "image_shadow": "0 4px 12px rgba(0,0,0,0.1)",
+        "padding_top": 40,
+        "padding_bottom": 40
+      }
+    }
+  ]
+}
+{% endschema %}

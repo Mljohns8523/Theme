@@ -1,0 +1,213 @@
+{% comment %} Customer Reviews Section - Beast Bites Style {% endcomment %}
+<section
+  class="customer-reviews py-20 bg-[{{ section.settings.bg_color }}] text-[{{ section.settings.text_color }}]"
+  id="section-{{ section.id }}"
+>
+  <div class="container mx-auto px-6">
+    {% if section.settings.title != blank %}
+      <h2 class="text-5xl md:text-6xl font-extrabold text-center mb-6 {{ section.settings.title_font }}">
+        {{ section.settings.title }}
+      </h2>
+    {% endif %}
+
+    {% if section.settings.show_avg_rating %}
+      <div class="flex justify-center items-center mb-12 text-{{ section.settings.avg_rating_text_size }}">
+        <span class="font-semibold mr-2">{{ section.settings.avg_rating }} / 5</span>
+        {% for i in (1..5) %}
+          <i class="fas fa-star text-{{ section.settings.avg_star_color }}"></i>
+        {% endfor %}
+      </div>
+    {% endif %}
+
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
+      {% for block in section.blocks %}
+        <div
+          class="review-card bg-[{{ block.settings.card_bg_color }}] text-[{{ block.settings.card_text_color }}] p-8 rounded-[{{ block.settings.border_radius }}] shadow-[{{ block.settings.shadow_intensity }}] transition duration-300 hover:scale-105"
+          style="box-shadow: 0 4px 6px -1px {{ block.settings.shadow_color | default: 'rgba(0, 0, 0, 0.1)' }};"
+          itemscope
+          itemtype="http://schema.org/Review"
+        >
+          <div class="flex items-center mb-6">
+            {% assign rating = block.settings.rating | default: 5 %}
+            {% for i in (1..5) %}
+              <svg
+                class="w-6 h-6 {% if i <= rating %}text-[{{ block.settings.star_color | default: section.settings.star_color }}]{% else %}text-gray-300{% endif %}"
+                fill="currentColor"
+                viewBox="0 0 20 20"
+              >
+                <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.286 3.97a1 1 0 00.95.69h4.178c.969 0 1.371 1.24.588 1.81l-3.375 2.453a1 1 0 00-.364 1.118l1.286 3.97c.3.921-.755 1.688-1.54 1.118l-3.375-2.453a1 1 0 00-1.175 0l-3.375 2.453c-.784.57-1.84-.197-1.54-1.118l1.286-3.97a1 1 0 00-.364-1.118L2.035 9.397c-.784-.57-.38-1.81.588-1.81h4.178a1 1 0 00.95-.69l1.286-3.97z"/>
+              </svg>
+            {% endfor %}
+          </div>
+          <p class="italic mb-6 leading-relaxed" itemprop="description">"{{ block.settings.review_text }}"</p>
+          <p class="text-xl font-semibold" itemprop="author">{{ block.settings.customer_name }}</p>
+          <meta itemprop="itemReviewed" content="{{ shop.name }}">
+          <meta itemprop="datePublished" content="{{ 'now' | date: '%Y-%m-%d' }}">
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+{% schema %}
+{
+  "name": "Customer Reviews",
+  "tag": "section",
+  "settings": [
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Section Title",
+      "default": "What Our Customers Say"
+    },
+    {
+      "type": "color",
+      "id": "bg_color",
+      "label": "Background Color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text Color",
+      "default": "#111827"
+    },
+    {
+      "type": "color",
+      "id": "star_color",
+      "label": "Star Rating Color (Individual)",
+      "default": "#facc15"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_avg_rating",
+      "label": "Show Average Rating",
+      "default": true
+    },
+    {
+      "type": "range",
+      "id": "avg_rating",
+      "label": "Average Rating",
+      "min": 0,
+      "max": 5,
+      "step": 0.1,
+      "default": 4.9
+    },
+    {
+      "type": "color",
+      "id": "avg_star_color",
+      "label": "Average Star Color",
+      "default": "#facc15"
+    },
+    {
+      "type": "select",
+      "id": "avg_rating_text_size",
+      "label": "Average Rating Text Size",
+      "options": [
+        { "value": "lg", "label": "Small" },
+        { "value": "xl", "label": "Medium" },
+        { "value": "2xl", "label": "Large" }
+      ],
+      "default": "xl"
+    },
+    {
+      "type": "select",
+      "id": "title_font",
+      "label": "Title Font",
+      "options": [
+        { "value": "font-sans", "label": "Sans Serif" },
+        { "value": "font-serif", "label": "Serif" },
+        { "value": "font-mono", "label": "Monospace" },
+        { "value": "font-extrabold", "label": "Extra Bold" }
+      ],
+      "default": "font-extrabold"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "review",
+      "name": "Review",
+      "settings": [
+        {
+          "type": "text",
+          "id": "customer_name",
+          "label": "Customer Name",
+          "default": "John Doe"
+        },
+        {
+          "type": "textarea",
+          "id": "review_text",
+          "label": "Review Text",
+          "default": "This product is amazing! It exceeded all my expectations."
+        },
+        {
+          "type": "range",
+          "id": "rating",
+          "label": "Star Rating",
+          "min": 1,
+          "max": 5,
+          "step": 1,
+          "default": 5
+        },
+        {
+          "type": "color",
+          "id": "card_bg_color",
+          "label": "Card Background Color",
+          "default": "#ffffff"
+        },
+        {
+          "type": "color",
+          "id": "card_text_color",
+          "label": "Card Text Color",
+          "default": "#1f2937"
+        },
+        {
+          "type": "color",
+          "id": "shadow_color",
+          "label": "Shadow Color",
+          "default": "rgba(0, 0, 0, 0.1)"
+        },
+        {
+          "type": "text",
+          "id": "border_radius",
+          "label": "Border Radius (e.g., 1rem)",
+          "default": "1rem"
+        },
+        {
+          "type": "text",
+          "id": "shadow_intensity",
+          "label": "Shadow Intensity (e.g., xl)",
+          "default": "xl"
+        },
+        {
+          "type": "color",
+          "id": "star_color",
+          "label": "Star Color",
+          "default": "#facc15"
+        }
+      ]
+    }
+  ],
+  "max_blocks": 12,
+  "presets": [
+    {
+      "name": "Customer Reviews",
+      "category": "Testimonials",
+      "blocks": [
+        {
+          "type": "review"
+        },
+        {
+          "type": "review"
+        },
+        {
+          "type": "review"
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

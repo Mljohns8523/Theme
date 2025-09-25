@@ -1,0 +1,152 @@
+{% comment %}
+  Menu Buttons Section (OS 2.0)
+  Renders any Shopify menu as a row or grid of buttons.
+  Excludes "Home" link from display.
+{% endcomment %}
+
+<section id="menu-buttons-{{ section.id }}" class="menu-buttons">
+  {% if section.settings.heading != blank %}
+    <h2 class="mb__heading">{{ section.settings.heading | escape }}</h2>
+  {% endif %}
+
+  {% liquid
+    assign has_selected_menu = false
+    if section.settings.menu != blank
+      if section.settings.menu.links.size > 0
+        assign has_selected_menu = true
+      endif
+    endif
+
+    assign has_main_menu = false
+    if linklists['main-menu'] and linklists['main-menu'].links.size > 0
+      assign has_main_menu = true
+    endif
+  %}
+
+  {% if has_selected_menu or has_main_menu %}
+    <nav class="mb__nav" aria-label="{{ section.settings.heading | default: 'Site navigation' | escape }}">
+      <ul class="mb__list">
+        {% if has_selected_menu %}
+          {% for link in section.settings.menu.links %}
+            {% unless link.title == 'Home' %}
+              <li class="mb__item">
+                <a class="mb__btn" href="{{ link.url }}" {% if link.current %}aria-current="page"{% endif %}>
+                  {{ link.title | escape }}
+                </a>
+              </li>
+            {% endunless %}
+          {% endfor %}
+        {% else %}
+          {% for link in linklists['main-menu'].links %}
+            {% unless link.title == 'Home' %}
+              <li class="mb__item">
+                <a class="mb__btn" href="{{ link.url }}" {% if link.current %}aria-current="page"{% endif %}>
+                  {{ link.title | escape }}
+                </a>
+              </li>
+            {% endunless %}
+          {% endfor %}
+        {% endif %}
+      </ul>
+    </nav>
+  {% else %}
+    <p class="mb__empty">Select a menu in the section settings or add items to your Main menu.</p>
+  {% endif %}
+</section>
+
+<style>
+  /* Scoped to this section instance */
+  #menu-buttons-{{ section.id }}{
+    --mb-max-width: {{ section.settings.max_width }}px;
+    --mb-gap: {{ section.settings.gap }}px;
+    --mb-radius: {{ section.settings.radius }}px;
+    --mb-px: {{ section.settings.pad_x }}px;
+    --mb-py: {{ section.settings.pad_y }}px;
+    --mb-font-size: {{ section.settings.font_size }}px;
+    --mb-weight: {{ section.settings.font_weight }};
+    --mb-tt: {% if section.settings.uppercase %}uppercase{% else %}none{% endif %};
+    --mb-justify: {{ section.settings.align }};
+    --mb-btn-bg: {{ section.settings.btn_bg }};
+    --mb-btn-text: {{ section.settings.btn_text }};
+    --mb-btn-bg-hover: {{ section.settings.btn_bg_hover }};
+    --mb-btn-text-hover: {{ section.settings.btn_text_hover }};
+    --mb-section-pad-top: {{ section.settings.pad_top }}px;
+    --mb-section-pad-bottom: {{ section.settings.pad_bottom }}px;
+  }
+
+  #menu-buttons-{{ section.id }}{ padding-top:var(--mb-section-pad-top); padding-bottom:var(--mb-section-pad-bottom); }
+  #menu-buttons-{{ section.id }} .mb__heading{ text-align:center; margin:0 0 16px; }
+  #menu-buttons-{{ section.id }} .mb__nav{ max-width:var(--mb-max-width); margin:0 auto; }
+
+  #menu-buttons-{{ section.id }} .mb__list{
+    list-style:none; margin:0; padding:0;
+    display:grid; gap:var(--mb-gap);
+    grid-template-columns: repeat({{ section.settings.columns }}, minmax(0,1fr));
+    justify-content: var(--mb-justify);
+  }
+
+  @media (max-width: 700px){
+    #menu-buttons-{{ section.id }} .mb__list{ grid-template-columns: 1fr 1fr; }
+  }
+
+  #menu-buttons-{{ section.id }} .mb__btn{
+    display:inline-block; width:100%; text-align:center; text-decoration:none;
+    padding:var(--mb-py) var(--mb-px);
+    border-radius:var(--mb-radius);
+    font-size:var(--mb-font-size); font-weight:var(--mb-weight); text-transform:var(--mb-tt);
+    background:var(--mb-btn-bg); color:var(--mb-btn-text);
+    border:1px solid transparent;
+    transition: background .15s ease, color .15s ease, transform .05s ease;
+  }
+  #menu-buttons-{{ section.id }} .mb__btn:hover,
+  #menu-buttons-{{ section.id }} .mb__btn:focus{ background:var(--mb-btn-bg-hover); color:var(--mb-btn-text-hover); }
+  #menu-buttons-{{ section.id }} .mb__btn:active{ transform:translateY(1px); }
+
+  #menu-buttons-{{ section.id }} .mb__empty{ text-align:center; opacity:.7; }
+</style>
+
+{% schema %}
+{
+  "name": "Menu buttons",
+  "settings": [
+    { "type": "text", "id": "heading", "label": "Heading", "default": "Shop by category" },
+    { "type": "link_list", "id": "menu", "label": "Menu" },
+
+    { "type": "range", "id": "columns", "label": "Columns", "min": 2, "max": 6, "step": 1, "default": 4 },
+    { "type": "select", "id": "align", "label": "Alignment", "default": "center",
+      "options": [
+        { "value": "flex-start", "label": "Left" },
+        { "value": "center", "label": "Center" },
+        { "value": "flex-end", "label": "Right" }
+      ]
+    },
+
+    { "type": "range", "id": "gap", "label": "Button gap", "min": 4, "max": 40, "step": 2, "default": 12 },
+    { "type": "range", "id": "radius", "label": "Corner radius", "min": 0, "max": 40, "step": 2, "default": 12 },
+    { "type": "range", "id": "pad_x", "label": "Button padding X", "min": 8, "max": 40, "step": 2, "default": 18 },
+    { "type": "range", "id": "pad_y", "label": "Button padding Y", "min": 8, "max": 28, "step": 2, "default": 12 },
+    { "type": "range", "id": "font_size", "label": "Font size", "min": 12, "max": 22, "step": 1, "default": 15 },
+    { "type": "select", "id": "font_weight", "label": "Font weight", "default": "600",
+      "options": [
+        { "value": "400", "label": "Regular" },
+        { "value": "500", "label": "Medium" },
+        { "value": "600", "label": "Semibold" },
+        { "value": "700", "label": "Bold" }
+      ]
+    },
+    { "type": "checkbox", "id": "uppercase", "label": "Uppercase labels", "default": true },
+
+    { "type": "color", "id": "btn_bg", "label": "Button background", "default": "#0b3e77" },
+    { "type": "color", "id": "btn_text", "label": "Button text", "default": "#ffffff" },
+    { "type": "color", "id": "btn_bg_hover", "label": "Button hover background", "default": "#092e58" },
+    { "type": "color", "id": "btn_text_hover", "label": "Button hover text", "default": "#ffffff" },
+
+    { "type": "range", "id": "max_width", "label": "Max content width", "min": 600, "max": 1600, "step": 20, "default": 1200 },
+    { "type": "range", "id": "pad_top", "label": "Section padding top", "min": 0, "max": 120, "step": 4, "default": 32 },
+    { "type": "range", "id": "pad_bottom", "label": "Section padding bottom", "min": 0, "max": 120, "step": 4, "default": 32 }
+  ],
+  "presets": [
+    { "name": "Menu buttons" }
+  ]
+}
+{% endschema %}

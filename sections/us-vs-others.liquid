@@ -1,0 +1,332 @@
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link
+  href="https://fonts.googleapis.com/css2?family=Montserrat:wght@900&family=DM+Sans:wght@400;500;700&display=swap"
+  rel="stylesheet"
+>
+{% comment %}
+  Font Awesome CDN commented out, as inline SVGs are used per provided HTML.
+  Uncomment if needed for future icon additions.
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v6.5.2/css/all.css" integrity="sha384-4LISRrVgo4JZwAkP/2CY2vOTNp2U4g2fEI5E+nDQo2GbZ7uD6lsv1u1mKab7j8BR" crossorigin="anonymous" onload="console.log('Font Awesome loaded')" onerror="console.error('Font Awesome failed to load')">
+{% endcomment %}
+
+{{ 'section-us-vs-others.css' | asset_url | stylesheet_tag }}
+<script src="{{ 'section-us-vs-others.js' | asset_url }}" defer="defer"></script>
+
+<section
+  class="us-vs-others color-{{ section.settings.color_scheme }} gradient"
+  style="
+    --primary-color: {{ section.settings.primary_color }};
+    --highlight-color: {{ section.settings.highlight_color }};
+    --text-color: {{ section.settings.text_color }};
+    --header-font-size: {{ section.settings.header_font_size | divided_by: 10.0 }}rem;
+    --body-font-size: {{ section.settings.body_font_size | divided_by: 10.0 }}rem;
+    --padding-top: {{ section.settings.padding_top }}px;
+    --padding-bottom: {{ section.settings.padding_bottom }}px;
+  "
+>
+  <div class="page-width">
+    <h2 class="us-vs-others__title">{{ section.settings.title | escape }}</h2>
+    <div class="us-vs-others__table-wrapper">
+      <table class="us-vs-others__table" role="grid" aria-label="{{ section.settings.title | escape }}">
+        <thead>
+          <tr class="us-vs-others__header-row">
+            <th class="us-vs-others__header us-vs-others__header--feature"></th>
+            <th class="us-vs-others__header us-vs-others__header--us">
+              {%- if section.settings.logo != blank %}
+                <img
+                  src="{{ section.settings.logo | image_url: width: 200 }}"
+                  alt="{{ section.settings.us_brand_name | escape }}"
+                  class="us-vs-others__logo"
+                  width="100%"
+                  height="auto"
+                  loading="lazy"
+                >
+              {%- else %}
+                {{ section.settings.us_brand_name | escape }}
+              {%- endif %}
+            </th>
+            <th class="us-vs-others__header">{{ section.settings.competitor_name }}</th>
+          </tr>
+        </thead>
+        <tbody class="us-vs-others__tbody">
+          {%- for feature in section.blocks %}
+            <tr class="us-vs-others__feature-row">
+              <td class="us-vs-others__feature">{{ feature.settings.feature_name }}</td>
+              <td class="us-vs-others__cell us-vs-others__cell--us">
+                {%- if feature.settings.us_value == 'yes' %}
+                  <svg
+                    fill="#4BB82C"
+                    width="30px"
+                    height="30px"
+                    viewBox="-3.5 0 19 19"
+                    xmlns="http://www.w3.org/2000/svg"
+                    class="us-vs-others__icon"
+                    aria-label="Available"
+                  >
+                    <path d="M4.63 15.638a1.028 1.028 0 0 1-.79-.37L.36 11.09a1.03 1.03 0 1 1 1.58-1.316l2.535 3.043L9.958 3.32a1.029 1.029 0 0 1 1.783 1.03L5.52 15.122a1.03 1.03 0 0 1-.803.511.89.89 0 0 1-.088.004z"></path>
+                  </svg>
+                {%- elsif feature.settings.us_value == 'no' %}
+                  <svg
+                    fill="#DA6262"
+                    width="30px"
+                    height="30px"
+                    viewBox="0 0 32 32"
+                    xmlns="http://www.w3.org/2000/svg"
+                    class="us-vs-others__icon"
+                    aria-label="Not Available"
+                  >
+                    <path d="M19.587 16.001l6.096 6.096c0.396 0.396 0.396 1.039 0 1.435l-2.151 2.151c-0.396 0.396-1.038 0.396-1.435 0l-6.097-6.096-6.097 6.096c-0.396 0.396-1.038 0.396-1.434 0l-2.152-2.151c-0.396-0.396-0.396-1.038 0-1.435l6.097-6.096-6.097-6.097c-0.396-0.396-0.396-1.039 0-1.435l2.153-2.151c0.396-0.396 1.038-0.396 1.434 0l6.096 6.097 6.097-6.097c0.396-0.396 1.038-0.396 1.435 0l2.151 2.152c0.396 0.396 0.396 1.038 0 1.435l-6.096 6.096z"></path>
+                  </svg>
+                {%- else %}
+                  {{ feature.settings.us_value }}
+                {%- endif %}
+              </td>
+              <td class="us-vs-others__cell us-vs-others__cell--other">
+                {%- if feature.settings.competitor_value == 'yes' %}
+                  <svg
+                    fill="#4BB82C"
+                    width="30px"
+                    height="30px"
+                    viewBox="-3.5 0 19 19"
+                    xmlns="http://www.w3.org/2000/svg"
+                    class="us-vs-others__icon"
+                    aria-label="Available"
+                  >
+                    <path d="M4.63 15.638a1.028 1.028 0 0 1-.79-.37L.36 11.09a1.03 1.03 0 1 1 1.58-1.316l2.535 3.043L9.958 3.32a1.029 1.029 0 0 1 1.783 1.03L5.52 15.122a1.03 1.03 0 0 1-.803.511.89.89 0 0 1-.088.004z"></path>
+                  </svg>
+                {%- elsif feature.settings.competitor_value == 'no' %}
+                  <svg
+                    fill="#DA6262"
+                    width="30px"
+                    height="30px"
+                    viewBox="0 0 32 32"
+                    xmlns="http://www.w3.org/2000/svg"
+                    class="us-vs-others__icon"
+                    aria-label="Not Available"
+                  >
+                    <path d="M19.587 16.001l6.096 6.096c0.396 0.396 0.396 1.039 0 1.435l-2.151 2.151c-0.396 0.396-1.038 0.396-1.435 0l-6.097-6.096-6.097 6.096c-0.396 0.396-1.038 0.396-1.434 0l-2.152-2.151c-0.396-0.396-0.396-1.038 0-1.435l6.097-6.096-6.097-6.097c-0.396-0.396-0.396-1.039 0-1.435l2.153-2.151c0.396-0.396 1.038-0.396 1.434 0l6.096 6.097 6.097-6.097c-0.396-0.396 1.038-0.396 1.435 0l2.151 2.152c0.396 0.396 0.396 1.038 0 1.435l-6.096 6.096z"></path>
+                  </svg>
+                {%- else %}
+                  {{ feature.settings.competitor_value }}
+                {%- endif %}
+              </td>
+            </tr>
+          {%- endfor %}
+        </tbody>
+      </table>
+    </div>
+    {%- if section.settings.cta_text != blank and section.settings.cta_link != blank %}
+      <div class="us-vs-others__cta">
+        <a href="{{ section.settings.cta_link }}" class="button button--primary">{{ section.settings.cta_text }}</a>
+      </div>
+    {%- endif %}
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Us vs Others",
+  "class": "section-us-vs-others",
+  "settings": [
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Section Title",
+      "default": "Why Choose Us?"
+    },
+    {
+      "type": "text",
+      "id": "us_brand_name",
+      "label": "Your Brand Name",
+      "default": "Us"
+    },
+    {
+      "type": "image_picker",
+      "id": "logo",
+      "label": "Your Brand Logo"
+    },
+    {
+      "type": "text",
+      "id": "competitor_name",
+      "label": "Competitor Name",
+      "default": "Other Brands"
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "Color Scheme",
+      "default": "scheme-1"
+    },
+    {
+      "type": "color",
+      "id": "primary_color",
+      "label": "Primary Color (Us Column, Buttons)",
+      "default": "#FF5733"
+    },
+    {
+      "type": "color",
+      "id": "highlight_color",
+      "label": "Highlight Color (Hovers)",
+      "default": "#E04E2D"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text Color (Features)",
+      "default": "#383838"
+    },
+    {
+      "type": "range",
+      "id": "header_font_size",
+      "label": "Header Font Size",
+      "min": 16,
+      "max": 32,
+      "step": 1,
+      "unit": "px",
+      "default": 24
+    },
+    {
+      "type": "range",
+      "id": "body_font_size",
+      "label": "Body Font Size",
+      "min": 12,
+      "max": 20,
+      "step": 1,
+      "unit": "px",
+      "default": 16
+    },
+    {
+      "type": "text",
+      "id": "cta_text",
+      "label": "CTA Button Text",
+      "default": "Shop Now"
+    },
+    {
+      "type": "url",
+      "id": "cta_link",
+      "label": "CTA Button Link"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "label": "Padding Top",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "default": 40
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "label": "Padding Bottom",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "default": 40
+    }
+  ],
+  "blocks": [
+    {
+      "type": "feature",
+      "name": "Feature",
+      "settings": [
+        {
+          "type": "text",
+          "id": "feature_name",
+          "label": "Feature Name",
+          "default": "Feature"
+        },
+        {
+          "type": "select",
+          "id": "us_value",
+          "label": "Us Value",
+          "options": [
+            {"value": "yes", "label": "Yes"},
+            {"value": "no", "label": "No"},
+            {"value": "custom", "label": "Custom"}
+          ],
+          "default": "yes"
+        },
+        {
+          "type": "text",
+          "id": "us_custom_value",
+          "label": "Us Custom Value (if Custom)",
+          "default": "yes"
+        },
+        {
+          "type": "select",
+          "id": "competitor_value",
+          "label": "Competitor Value",
+          "options": [
+            {"value": "yes", "label": "Yes"},
+            {"value": "no", "label": "No"},
+            {"value": "custom", "label": "Custom"}
+          ],
+          "default": "no"
+        },
+        {
+          "type": "text",
+          "id": "competitor_custom_value",
+          "label": "Competitor Custom Value (if Custom)",
+          "default": "yes"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Us vs Others",
+      "settings": {
+        "title": "Why Choose Us?",
+        "us_brand_name": "Us",
+        "competitor_name": "Other Brands"
+      },
+      "blocks": [
+        {
+          "type": "feature",
+          "settings": {
+            "feature_name": "Clinically Proven",
+            "us_value": "yes",
+            "competitor_value": "no"
+          }
+        },
+        {
+          "type": "feature",
+          "settings": {
+            "feature_name": "Youthful Radiance",
+            "us_value": "yes",
+            "competitor_value": "no"
+          }
+        },
+        {
+          "type": "feature",
+          "settings": {
+            "feature_name": "Home Comfort",
+            "us_value": "yes",
+            "competitor_value": "no"
+          }
+        },
+        {
+          "type": "feature",
+          "settings": {
+            "feature_name": "Enhanced Absorption",
+            "us_value": "yes",
+            "competitor_value": "no"
+          }
+        },
+        {
+          "type": "feature",
+          "settings": {
+            "feature_name": "Firms Skin",
+            "us_value": "yes",
+            "competitor_value": "no"
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

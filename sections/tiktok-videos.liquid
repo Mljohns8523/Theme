@@ -1,0 +1,252 @@
+{% comment %}
+  TikTok Videos Section
+  Displays up to 4 TikTok or Shopify-hosted videos in a responsive grid.
+  Features: Customizable title, title size, mobile title size, title text color, and section background color.
+  Uses Montserrat for title, supports mute toggle with Font Awesome icons.
+  Styling in tiktok-videos.css with inline fallback for text color and mobile title size.
+  Inspired by beastbites.com aesthetic.
+{% endcomment %}
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link
+  href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700&display=swap"
+  rel="stylesheet"
+>
+<script src="https://kit.fontawesome.com/your-font-awesome-kit.js" crossorigin="anonymous"></script>
+
+{{ 'tiktok-videos.css' | asset_url | stylesheet_tag }}
+
+{%- style -%}
+  .tiktok-videos__title {
+    color: var(--text-color) !important;
+  }
+
+  @media screen and (max-width: 749px) {
+    .tiktok-videos__title {
+      font-size: var(--mobile-title-size);
+    }
+  }
+{%- endstyle -%}
+
+<div
+  class="tiktok-videos__section"
+  style="--section-background-color: {{ section.settings.background_color | default: '#F8F8F8' }}; --text-color: {{ section.settings.text_color | default: '#000000' }}; --mobile-title-size: {{ section.settings.mobile_title_size | divided_by: 10.0 }}rem;"
+>
+  <div class="tiktok-videos__content">
+    {%- unless section.settings.title == blank -%}
+      <h2 class="tiktok-videos__title tiktok-videos__title--{{ section.settings.title_size }}">
+        {{ section.settings.title | escape }}
+      </h2>
+    {%- endunless -%}
+
+    {%- if section.settings.video_1
+      or section.settings.video_url_1
+      or section.settings.video_2
+      or section.settings.video_url_2
+      or section.settings.video_3
+      or section.settings.video_url_3
+      or section.settings.video_4
+      or section.settings.video_url_4
+    -%}
+      <div class="tiktok-videos__grid">
+        {%- for i in (1..4) -%}
+          {%- assign video_key = 'video_' | append: i -%}
+          {%- assign url_key = 'video_url_' | append: i -%}
+          {%- if section.settings[video_key] or section.settings[url_key] -%}
+            <div
+              class="tiktok-videos__video-wrapper"
+              data-video-id="video-{{ section.id }}-{{ i }}"
+              {% if section.settings[url_key] %}
+                data-tiktok-url="{{ section.settings[url_key] | escape }}"
+              {% endif %}
+            >
+              {%- if section.settings[video_key] -%}
+                {{
+                  section.settings[video_key]
+                  | video_tag:
+                    autoplay: true,
+                    muted: true,
+                    loop: true,
+                    playsinline: true,
+                    class: 'tiktok-videos__video',
+                    loading: 'lazy'
+                }}
+              {%- elsif section.settings[url_key] -%}
+                <div class="tiktok-videos__iframe-container">
+                  <iframe
+                    class="tiktok-videos__iframe"
+                    src="https://www.tiktok.com/embed/v2/{{ section.settings[url_key] | split: '/video/' | last | split: '?' | first }}?loop=1"
+                    frameborder="0"
+                    allow="autoplay; encrypted-media"
+                  ></iframe>
+                </div>
+              {%- endif -%}
+              <i class="tiktok-videos__mute-icon fas fa-volume-mute"></i>
+            </div>
+          {%- endif -%}
+        {%- endfor -%}
+      </div>
+    {%- endif -%}
+  </div>
+</div>
+
+{%- javascript -%}
+  document.addEventListener('DOMContentLoaded', () => {
+    const wrappers = document.querySelectorAll('.tiktok-videos__video-wrapper');
+    wrappers.forEach(wrapper => {
+      const video = wrapper.querySelector('.tiktok-videos__video');
+      const iframe = wrapper.querySelector('.tiktok-videos__iframe');
+      const muteIcon = wrapper.querySelector('.tiktok-videos__mute-icon');
+      let isMuted = true;
+
+      if (video) {
+        // Handle Shopify-hosted videos
+        wrapper.addEventListener('click', (e) => {
+          e.preventDefault();
+          isMuted = !isMuted;
+          video.muted = isMuted;
+          muteIcon.className = `tiktok-videos__mute-icon fas fa-volume-${isMuted ? 'mute' : 'up'}`;
+        });
+      } else if (iframe) {
+        // Handle TikTok iframes
+        iframe.addEventListener('load', () => {
+          iframe.contentWindow.postMessage('loop', '*');
+        });
+        wrapper.addEventListener('click', (e) => {
+          e.preventDefault();
+          isMuted = !isMuted;
+          muteIcon.className = `tiktok-videos__mute-icon fas fa-volume-${isMuted ? 'mute' : 'up'}`;
+          iframe.contentWindow.postMessage('toggleMute', '*');
+        });
+      }
+    });
+  });
+{%- endjavascript -%}
+
+{% schema %}
+{
+  "name": "TikTok Videos",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Background"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Background Color",
+      "default": "#F8F8F8"
+    },
+    {
+      "type": "header",
+      "content": "Title"
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Section Title",
+      "default": "Our TikTok Videos"
+    },
+    {
+      "type": "select",
+      "id": "title_size",
+      "label": "Desktop Title Size",
+      "options": [
+        {
+          "value": "small",
+          "label": "Small"
+        },
+        {
+          "value": "medium",
+          "label": "Medium"
+        },
+        {
+          "value": "large",
+          "label": "Large"
+        }
+      ],
+      "default": "medium"
+    },
+    {
+      "type": "range",
+      "id": "mobile_title_size",
+      "min": 16,
+      "max": 40,
+      "step": 1,
+      "unit": "px",
+      "label": "Mobile Title Size",
+      "default": 20
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Title Text Color",
+      "default": "#000000"
+    },
+    {
+      "type": "header",
+      "content": "Video 1"
+    },
+    {
+      "type": "video",
+      "id": "video_1",
+      "label": "Shopify Video Upload",
+      "info": "Upload a video to Shopify Files or leave blank to use a TikTok URL."
+    },
+    {
+      "type": "url",
+      "id": "video_url_1",
+      "label": "TikTok Video URL",
+      "info": "Enter a TikTok video URL, e.g., https://www.tiktok.com/@username/video/123456789. Ignored if a Shopify video is uploaded."
+    },
+    {
+      "type": "header",
+      "content": "Video 2"
+    },
+    {
+      "type": "video",
+      "id": "video_2",
+      "label": "Shopify Video Upload"
+    },
+    {
+      "type": "url",
+      "id": "video_url_2",
+      "label": "TikTok Video URL"
+    },
+    {
+      "type": "header",
+      "content": "Video 3"
+    },
+    {
+      "type": "video",
+      "id": "video_3",
+      "label": "Shopify Video Upload"
+    },
+    {
+      "type": "url",
+      "id": "video_url_3",
+      "label": "TikTok Video URL"
+    },
+    {
+      "type": "header",
+      "content": "Video 4"
+    },
+    {
+      "type": "video",
+      "id": "video_4",
+      "label": "Shopify Video Upload"
+    },
+    {
+      "type": "url",
+      "id": "video_url_4",
+      "label": "TikTok Video URL"
+    }
+  ],
+  "presets": [
+    {
+      "name": "TikTok Videos"
+    }
+  ]
+}
+{% endschema %}

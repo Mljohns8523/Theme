@@ -1,0 +1,415 @@
+{% comment %}
+  Results Section 2 for Titan | AI Store Builder
+  Displays a grid of stat cards with animated percentage meters and rotating gradient borders.
+  Features a white inner container layered over a gradient-animated outer box with a thin black border.
+  Inherits site header font, responsive design, and fade-in animations.
+  Aligned with Beast Bites aesthetic (#FF3C00 accents, clean layout).
+  Note: Animation requires Houdini API support (modern browsers like Chrome, Edge, Firefox).
+{% endcomment %}
+
+<div class="stats-grid fade-in-child" style="background-color: {{ section.settings.background_color }};">
+  {% assign stats = '1,2,3,4' | split: ',' %}
+  {% for stat in stats %}
+    {% assign delay = forloop.index0 | times: 150 %}
+    {% assign title_key = 'title_' | append: stat %}
+    {% assign text_key = 'text_' | append: stat %}
+    {% assign percentage_key = 'percentage_' | append: stat %}
+    <div
+      class="reasons-to-buy__content-inner-item reasons-to-buy__points stat-card animated"
+      style="transition-delay: {{ delay }}ms; --card-bg: {{ section.settings.card_background }}; --gradient-start: {{ section.settings.gradient_start }}; --gradient-end: {{ section.settings.gradient_end }}; --clr-1: {{ section.settings.animation_color_1 }}; --clr-2: {{ section.settings.animation_color_2 }}; --clr-3: {{ section.settings.animation_color_3 }};"
+    >
+      <div
+        class="stat-inner"
+        style="background-color: {{ section.settings.inner_background }}; padding: 22px; border-radius: 10px; margin: -22px;"
+      >
+        <div class="stat-content block-row_stat_{{ forloop.index }}">
+          <style>
+            .block-row_stat_{{ forloop.index }} .stats-title,
+            .block-row_stat_{{ forloop.index }} .stats-title p {
+              font-size: {{ section.settings.font_size_title }}px;
+              line-height: {{ section.settings.font_size_title | plus: 8 }}px;
+              color: #000000;
+            }
+            .block-row_stat_{{ forloop.index }} .stats-body-text,
+            .block-row_stat_{{ forloop.index }} .stats-body-text p {
+              font-size: {{ section.settings.font_size_title | minus: 6 }}px;
+              color: #333333;
+            }
+          </style>
+          <div class="stats-title">
+            <p>{{ section.settings[title_key] }}</p>
+          </div>
+          <div class="reasons-to-buy__content-inner-item-text sw-base-text-color stats-body-text">
+            <p>{{ section.settings[text_key] }}</p>
+          </div>
+        </div>
+        <div class="meter-container">
+          <div class="meter-track">
+            <div
+              class="meter-fill"
+              style="width: {{ section.settings[percentage_key] }}%; background: linear-gradient(90deg, {{ section.settings.gradient_start }}, {{ section.settings.gradient_end }});"
+            >
+              <div class="meter-shine"></div>
+            </div>
+          </div>
+          <div class="meter-percentage">{{ section.settings[percentage_key] }}%</div>
+        </div>
+      </div>
+    </div>
+  {% endfor %}
+</div>
+
+<style>
+  @property --gradient-angle {
+    syntax: "<angle>";
+    initial-value: 0deg;
+    inherits: false;
+  }
+
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 24px;
+    padding: 60px 20px;
+    max-width: 1280px;
+    margin: 0 auto;
+    border-radius: 16px;
+  }
+
+  .stat-card {
+    position: relative;
+    border-radius: 12px;
+    padding: 24px;
+    text-align: center;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1), inset 0 1px 2px rgba(255, 255, 255, 0.3);
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity {{ section.settings.animation_speed | divided_by: 1000.0 }}s ease, transform {{ section.settings.animation_speed | divided_by: 1000.0 }}s ease, box-shadow 0.3s ease;
+    background-color: var(--card-bg, #f8f9fb);
+    border: 1px solid #000000;
+  }
+
+  .stat-card::after,
+  .stat-card::before {
+    content: " ";
+    position: absolute;
+    z-index: -1;
+    inset: -0.5rem;
+    background: conic-gradient(
+      from var(--gradient-angle),
+      var(--card-bg, #f8f9fb),
+      var(--clr-1, #6420aa),
+      var(--clr-2, #ff3ea5),
+      var(--clr-3, #ff7ed4),
+      var(--clr-2, #ff3ea5),
+      var(--clr-1, #6420aa),
+      var(--card-bg, #f8f9fb)
+    );
+    border-radius: inherit;
+    animation: rotate 2.5s linear infinite;
+  }
+
+  .stat-card::after {
+    filter: blur(3rem);
+  }
+
+  .stat-card:hover {
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15), inset 0 1px 2px rgba(255, 255, 255, 0.3);
+    transform: translateY(25px);
+  }
+
+  .stat-card.animated {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .stat-inner {
+    position: relative;
+    z-index: 1;
+  }
+
+  .stats-title p {
+    margin: 0 0 12px;
+  }
+
+  .stats-body-text p {
+    margin: 0 0 20px;
+    line-height: 1.5;
+  }
+
+  .meter-container {
+    margin-top: 15px;
+  }
+
+  .meter-track {
+    background: #e0e4e9;
+    border-radius: 6px;
+    height: 10px;
+    overflow: hidden;
+    position: relative;
+  }
+
+  .meter-fill {
+    height: 100%;
+    position: relative;
+    transition: width {{ section.settings.animation_speed | divided_by: 1000.0 }}s ease-in-out;
+  }
+
+  .meter-shine {
+    background: linear-gradient(90deg, transparent, rgba(0, 0, 0, 0.3), transparent);
+    height: 100%;
+    width: 60%;
+    position: absolute;
+    animation: shine {{ section.settings.animation_speed | divided_by: 500.0 }}s infinite;
+  }
+
+  .meter-percentage {
+    font-size: 18px;
+    font-weight: 600;
+    color: #000;
+    margin-top: 8px;
+  }
+
+  @keyframes rotate {
+    0% {
+      --gradient-angle: 0deg;
+    }
+    100% {
+      --gradient-angle: 360deg;
+    }
+  }
+
+  @keyframes shine {
+    0% { left: -60%; }
+    100% { left: 160%; }
+  }
+
+  /* Mobile Responsiveness */
+  @media (max-width: 768px) {
+    .stats-grid {
+      grid-template-columns: 1fr;
+      padding: 30px 15px;
+    }
+
+    .stat-card {
+      padding: 20px;
+    }
+
+    .stats-title p {
+      font-size: {{ section.settings.font_size_title | minus: 2 }}px;
+      line-height: {{ section.settings.font_size_title | plus: 6 }}px;
+    }
+
+    .stats-body-text p {
+      font-size: {{ section.settings.font_size_title | minus: 8 }}px;
+    }
+
+    .meter-track {
+      height: 8px;
+    }
+
+    .meter-percentage {
+      font-size: 16px;
+    }
+  }
+
+  /* Fade-in animation trigger */
+  .fade-in-child .stat-card {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+
+  .fade-in-child .stat-card.animated {
+    opacity: 1;
+    transform: translateY(0);
+  }
+</style>
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.querySelectorAll('.stat-card').forEach(card => {
+            card.classList.add('animated');
+          });
+          observer.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.2 });
+
+    document.querySelectorAll('.stats-grid').forEach(grid => {
+      observer.observe(grid);
+    });
+
+    // Debug: Log meter-shine background
+    const shineElements = document.querySelectorAll('.meter-shine');
+    shineElements.forEach((el, index) => {
+      const bg = getComputedStyle(el).background;
+      console.log(`Meter shine [${index + 1}]: background = ${bg}`);
+    });
+  });
+</script>
+
+{% schema %}
+{
+  "name": "Results Section 2",
+  "settings": [
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Background Color",
+      "default": "#f0f4f8"
+    },
+    {
+      "type": "color",
+      "id": "card_background",
+      "label": "Card Background Color",
+      "default": "#f8f9fb"
+    },
+    {
+      "type": "color",
+      "id": "inner_background",
+      "label": "Inner Container Background Color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "gradient_start",
+      "label": "Gradient Start Color",
+      "default": "#ff3c00"
+    },
+    {
+      "type": "color",
+      "id": "gradient_end",
+      "label": "Gradient End Color",
+      "default": "#ff9a76"
+    },
+    {
+      "type": "color",
+      "id": "animation_color_1",
+      "label": "Animation Color 1",
+      "default": "#6420aa"
+    },
+    {
+      "type": "color",
+      "id": "animation_color_2",
+      "label": "Animation Color 2",
+      "default": "#ff3ea5"
+    },
+    {
+      "type": "color",
+      "id": "animation_color_3",
+      "label": "Animation Color 3",
+      "default": "#ff7ed4"
+    },
+    {
+      "type": "range",
+      "id": "font_size_title",
+      "label": "Title Font Size (px)",
+      "min": 16,
+      "max": 24,
+      "step": 1,
+      "default": 20
+    },
+    {
+      "type": "range",
+      "id": "animation_speed",
+      "label": "Animation Speed (ms)",
+      "min": 300,
+      "max": 1000,
+      "step": 100,
+      "default": 500
+    },
+    {
+      "type": "text",
+      "id": "title_1",
+      "label": "Stat 1 Title",
+      "default": "Increased Energy"
+    },
+    {
+      "type": "text",
+      "id": "text_1",
+      "label": "Stat 1 Description",
+      "default": "Users felt a surge in energy levels within 3 days of use."
+    },
+    {
+      "type": "range",
+      "id": "percentage_1",
+      "label": "Stat 1 Percentage",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "default": 94
+    },
+    {
+      "type": "text",
+      "id": "title_2",
+      "label": "Stat 2 Title",
+      "default": "Enhanced Focus"
+    },
+    {
+      "type": "text",
+      "id": "text_2",
+      "label": "Stat 2 Description",
+      "default": "Improved concentration reported after one week."
+    },
+    {
+      "type": "range",
+      "id": "percentage_2",
+      "label": "Stat 2 Percentage",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "default": 91
+    },
+    {
+      "type": "text",
+      "id": "title_3",
+      "label": "Stat 3 Title",
+      "default": "Stress Reduction"
+    },
+    {
+      "type": "text",
+      "id": "text_3",
+      "label": "Stat 3 Description",
+      "default": "Noticed lower stress levels in under 5 days."
+    },
+    {
+      "type": "range",
+      "id": "percentage_3",
+      "label": "Stat 3 Percentage",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "default": 87
+    },
+    {
+      "type": "text",
+      "id": "title_4",
+      "label": "Stat 4 Title",
+      "default": "Better Sleep"
+    },
+    {
+      "type": "text",
+      "id": "text_4",
+      "label": "Stat 4 Description",
+      "default": "Experienced deeper sleep after 4 nights of use."
+    },
+    {
+      "type": "range",
+      "id": "percentage_4",
+      "label": "Stat 4 Percentage",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "default": 90
+    }
+  ],
+  "presets": [
+    {
+      "name": "Results Section 2"
+    }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,102 @@
+{% comment %}
+  Delivery Info Section
+  Displays estimated delivery time with customizable days and styling.
+  Uses Google Fonts (DM Sans) and dynamic date calculation.
+{% endcomment %}
+
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;700&display=swap');
+
+  .delivery-info-{{ section.id }} {
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 400;
+    font-size: 14px;
+    color: {{ section.settings.text_color }};
+    background: {{ section.settings.background_color }};
+    border: 1.5px solid {{ section.settings.border_color }};
+    padding: 10px 14px;
+    border-radius: 8px;
+    max-width: 350px;
+    margin: 16px auto 0;
+    text-align: center;
+    box-shadow: 0 3px 8px rgba({{ section.settings.border_color | color_extract: 'red' }}, {{ section.settings.border_color | color_extract: 'green' }}, {{ section.settings.border_color | color_extract: 'blue' }}, 0.3);
+  }
+
+  .delivery-info-{{ section.id }} strong {
+    font-weight: 700;
+    text-decoration: underline;
+  }
+</style>
+
+{% if section.settings.show_delivery_info %}
+  <div class="delivery-info-{{ section.id }}" id="delivery-info-{{ section.id }}">
+    Arrives in
+    <strong>
+      {{- section.settings.delivery_days }} day{% if section.settings.delivery_days > 1 %}s{% endif -%}
+    </strong>
+    if you order today.<br>
+    Or get it by <strong id="delivery-date-{{ section.id }}"></strong>.
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      function formatDate(date) {
+        const options = { month: 'short', day: 'numeric' };
+        return date.toLocaleDateString(undefined, options);
+      }
+
+      const today = new Date();
+      const deliveryDate = new Date(today);
+      deliveryDate.setDate(today.getDate() + {{ section.settings.delivery_days }});
+
+      document.getElementById('delivery-date-{{ section.id }}').textContent = formatDate(deliveryDate);
+    });
+  </script>
+{% endif %}
+
+{% schema %}
+{
+  "name": "Delivery Info",
+  "settings": [
+    {
+      "type": "checkbox",
+      "id": "show_delivery_info",
+      "label": "Show Delivery Info",
+      "default": true
+    },
+    {
+      "type": "range",
+      "id": "delivery_days",
+      "label": "Delivery Days",
+      "min": 1,
+      "max": 30,
+      "step": 1,
+      "default": 3,
+      "unit": "day"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Background Color",
+      "default": "#FFEDED"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text Color",
+      "default": "#1A1A1A"
+    },
+    {
+      "type": "color",
+      "id": "border_color",
+      "label": "Border Color",
+      "default": "#FF4D4D"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Delivery Info"
+    }
+  ]
+}
+{% endschema %}

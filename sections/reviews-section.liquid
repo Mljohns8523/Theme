@@ -1,0 +1,209 @@
+{% comment %}
+  Reviews Section for Shopify Theme
+  - Displays a carousel of customer reviews with star ratings.
+  - Uses Tailwind CSS for styling and vanilla JS for carousel functionality.
+  - Schema allows customization of heading, background color, review count, and auto-slide.
+  - To integrate dynamic reviews, use a Shopify reviews app (e.g., Judge.me, Yotpo) or product metafields.
+  - Add this section to your theme via the Shopify Customizer or include it in a template.
+{% endcomment %}
+
+<section
+  class="reviews-section py-16 transition-colors duration-300"
+  style="background-color: {{ section.settings.background_color }};"
+>
+  <div class="container mx-auto px-4">
+    <h2 class="text-4xl font-bold text-center text-gray-800 dark:text-white mb-12">
+      {{ section.settings.heading | escape }}
+    </h2>
+
+    <div class="reviews-carousel relative overflow-hidden">
+      <div class="carousel-track flex transition-transform duration-500 ease-in-out">
+        {% comment %} Hardcoded review cards for demo. Replace with dynamic data below. {% endcomment %}
+        {% for i in (1..section.settings.review_count) %}
+          {% comment %} Sample reviews, limited by review_count setting {% endcomment %}
+          {% assign review_index = i | minus: 1 %}
+          {% assign sample_reviews = "Jane D.,Absolutely love the products! The quality is unmatched, and shipping was lightning fast!,5|Mark S.,Great experience, but I wish there were more color options available.,4|Emily R.,This store is a game-changer! Best customer service I've ever had!,5"
+            | split: '|'
+          %}
+          {% if review_index < sample_reviews.size %}
+            {% assign review = sample_reviews[review_index] | split: ',' %}
+            <div class="review-card flex-shrink-0 w-full md:w-1/3 px-4">
+              <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg">
+                <div class="flex items-center mb-4">
+                  <div class="stars flex">
+                    {% assign rating = review[2] | to_integer %}
+                    {% for j in (1..5) %}
+                      {% if j <= rating %}
+                        <svg class="w-5 h-5 text-yellow-400" fill="currentColor" viewBox="0 0 20 20">
+                          <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.286 3.97a1 1 0 00.95.69h4.18c.969 0 1.371 1.24.588 1.81l-3.39 2.46a1 1 0 00-.364 1.118l1.286 3.97c.3.921-.755 1.688-1.54 1.118l-3.39-2.46a1 1 0 00-1.175 0l-3.39 2.46c-.784.57-1.838-.197-1.54-1.118l1.286-3.97a1 1 0 00-.364-1.118L2.885 9.397c-.783-.57-.38-1.81.588-1.81h4.18a1 1 0 00.95-.69l1.286-3.97z"/>
+                        </svg>
+                      {% else %}
+                        <svg class="w-5 h-5 text-gray-300" fill="currentColor" viewBox="0 0 20 20">
+                          <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.286 3.97a1 1 0 00.95.69h4.18c.969 0 1.371 1.24.588 1.81l-3.39 2.46a1 1 0 00-.364 1.118l1.286 3.97c.3.921-.755 1.688-1.54 1.118l-3.39-2.46a1 1 0 00-1.175 0l-3.39 2.46c-.784.57-1.838-.197-1.54-1.118l1.286-3.97a1 1 0 00-.364-1.118L2.885 9.397c-.783-.57-.38-1.81.588-1.81h4.18a1 1 0 00.95-.69l1.286-3.97z"/>
+                        </svg>
+                      {% endif %}
+                    {% endfor %}
+                  </div>
+                </div>
+                <p class="text-gray-600 dark:text-gray-300 mb-4">"{{ review[1] | escape }}"</p>
+                <p class="font-semibold text-gray-800 dark:text-white">{{ review[0] | escape }}</p>
+              </div>
+            </div>
+          {% endif %}
+        {% endfor %}
+      </div>
+
+      {% comment %} Carousel navigation buttons {% endcomment %}
+      <button
+        class="carousel-prev absolute top-1/2 left-0 transform -translate-y-1/2 bg-gray-800 text-white p-2 rounded-full hover:bg-gray-600"
+        aria-label="Previous review"
+      >
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+        </svg>
+      </button>
+      <button
+        class="carousel-next absolute top-1/2 right-0 transform -translate-y-1/2 bg-gray-800 text-white p-2 rounded-full hover:bg-gray-600"
+        aria-label="Next review"
+      >
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+        </svg>
+      </button>
+    </div>
+  </div>
+</section>
+
+{% comment %}
+  Dynamic Reviews Integration:
+  - Use a Shopify reviews app like Judge.me or Yotpo to fetch reviews.
+  - Example with Judge.me: Replace hardcoded reviews with:
+    {% assign reviews = product.reviews | slice: 0, section.settings.review_count %}
+    {% for review in reviews %}
+      <div class="review-card flex-shrink-0 w-full md:w-1/3 px-4">
+        <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg">
+          <div class="stars flex">
+            {% for i in (1..review.rating) %}
+              <svg class="w-5 h-5 text-yellow-400" fill="currentColor" ...>...</svg>
+            {% endfor %}
+            {% for i in (review.rating..5) %}
+              <svg class="w-5 h-5 text-gray-300" fill="currentColor" ...>...</svg>
+            {% endfor %}
+          </div>
+          <p class="text-gray-600 dark:text-gray-300 mb-4">{{ review.body | escape }}</p>
+          <p class="font-semibold text-gray-800 dark:text-white">{{ review.author | escape }}</p>
+        </div>
+      </div>
+    {% endfor %}
+  - Alternatively, store reviews in product metafields and loop through them:
+    {% assign reviews = product.metafields.reviews.value | slice: 0, section.settings.review_count %}
+    {% for review in reviews %}
+      <div class="review-card ...">
+        <!-- Similar structure as above -->
+      </div>
+    {% endfor %}
+{% endcomment %}
+
+<style>
+  /* Tailwind CSS CDN */
+  @import url('https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css');
+
+  /* Custom carousel styles */
+  .carousel-track {
+    display: flex;
+    transition: transform 0.5s ease-in-out;
+  }
+
+  .review-card {
+    min-width: 100%;
+  }
+
+  @media (min-width: 768px) {
+    .review-card {
+      min-width: 33.333%;
+    }
+  }
+
+  /* Dark mode toggle (optional, requires JS or Shopify theme setting) */
+  @media (prefers-color-scheme: dark) {
+    .reviews-section {
+      background-color: #1f2937;
+    }
+  }
+</style>
+
+<script>
+  // Carousel functionality
+  document.addEventListener('DOMContentLoaded', () => {
+    const track = document.querySelector('.carousel-track');
+    const cards = document.querySelectorAll('.review-card');
+    const prevButton = document.querySelector('.carousel-prev');
+    const nextButton = document.querySelector('.carousel-next');
+    let currentIndex = 0;
+    const cardCount = cards.length;
+
+    function updateCarousel() {
+      const offset = currentIndex * -100;
+      track.style.transform = `translateX(${offset}%)`;
+    }
+
+    prevButton.addEventListener('click', () => {
+      currentIndex = (currentIndex > 0) ? currentIndex - 1 : cardCount - 1;
+      updateCarousel();
+    });
+
+    nextButton.addEventListener('click', () => {
+      currentIndex = (currentIndex < cardCount - 1) ? currentIndex + 1 : 0;
+      updateCarousel();
+    });
+
+    // Auto-slide if enabled
+    {% if section.settings.auto_slide %}
+      setInterval(() => {
+        currentIndex = (currentIndex < cardCount - 1) ? currentIndex + 1 : 0;
+        updateCarousel();
+      }, 5000);
+    {% endif %}
+  });
+</script>
+
+{% schema %}
+{
+  "name": "Reviews Section",
+  "settings": [
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Section Heading",
+      "default": "What Our Customers Say"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Background Color",
+      "default": "#F3F4F6"
+    },
+    {
+      "type": "range",
+      "id": "review_count",
+      "label": "Number of Reviews to Display",
+      "min": 1,
+      "max": 10,
+      "step": 1,
+      "default": 3
+    },
+    {
+      "type": "checkbox",
+      "id": "auto_slide",
+      "label": "Enable Auto-Slide Carousel",
+      "default": true
+    }
+  ],
+  "presets": [
+    {
+      "name": "Reviews Section",
+      "category": "Custom"
+    }
+  ]
+}
+{% endschema %}

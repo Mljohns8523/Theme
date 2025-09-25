@@ -1,0 +1,637 @@
+{% comment %}
+  As Seen On Section
+  Displays a carousel of logos, centered horizontally with uniform size.
+  Includes visibility controls, animation, and hover effects.
+  Updated to ensure logos are centered and same-sized across devices.
+{% endcomment %}
+
+{% liquid
+  assign displayed = true
+  if section.settings.hidden_products != blank
+    assign hidden_handles = section.settings.hidden_products | split: ','
+    for hidden_handle in hidden_handles
+      assign handle_strip = hidden_handle | strip
+      if handle_strip == product.handle
+        assign displayed = false
+        break
+      endif
+    endfor
+  endif
+  if section.settings.enable_specific_display and section.settings.displayed_products != blank
+    assign displayed_handles = section.settings.displayed_products | split: ','
+    assign displayed = false
+    for displayed_handle in displayed_handles
+      assign handle_strip = displayed_handle | strip
+      if handle_strip == product.handle
+        assign displayed = true
+        break
+      endif
+    endfor
+  endif
+  if section.settings.hidden_collections != blank
+    assign hidden_collections = section.settings.hidden_collections | split: ','
+    for collection in product.collections
+      for hidden_collection in hidden_collections
+        assign collection_strip = hidden_collection | strip
+        if collection.handle == collection_strip
+          assign displayed = false
+          break
+        endif
+      endfor
+    endfor
+  endif
+  if section.settings.hidden_tags != blank
+    assign hidden_tags = section.settings.hidden_tags | split: ','
+    for tag in product.tags
+      for hidden_tag in hidden_tags
+        assign tag_strip = hidden_tag | strip
+        if tag == tag_strip
+          assign displayed = false
+          break
+        endif
+      endfor
+    endfor
+  endif
+%}
+
+{% if displayed and section.blocks.size > 0 %}
+  <div
+    class="as-seen-on as-seen-on-{{ section.id }} color-{{ section.settings.color_scheme }} gradient section-{{ section.id }}-padding {{ section.settings.visibility }}"
+    style="
+      --logo-size: {{ section.settings.logo_size | divided_by: 10.0 }}rem;
+      --mobile-spacing: {{ section.settings.mobile_spacing }}px;
+      --tablet-spacing: {{ section.settings.tablet_spacing }}px;
+      --desktop-spacing: {{ section.settings.desktop_spacing }}px;
+    "
+    {% if section.settings.pause_on_hover %}
+      data-pause-on-hover
+    {% endif %}
+  >
+    {% if section.settings.heading != blank %}
+      <h2 class="as-seen-on-{{ section.id }}-heading {{ section.settings.heading_alignment }}">
+        {{ section.settings.heading }}
+      </h2>
+    {% endif %}
+    <div class="as-seen-on__container" style="animation-direction: {{ section.settings.animation_direction }};">
+      {% assign unique_blocks_total = section.blocks | size %}
+      {% assign target_multiply = 20 | divided_by: unique_blocks_total | floor %}
+      {% assign target_total = unique_blocks_total | times: target_multiply | times: 2 %}
+      {% assign block_counter = 0 %}
+
+      {% for block in section.blocks %}
+        <div
+          class="as-seen-on__item"
+          style="
+            background-color: {{ block.settings.background_color }};
+            padding: {{ block.settings.padding }}px;
+            border: {{ block.settings.border }};
+            box-shadow: {{ block.settings.box_shadow }};
+            --hover-scale: {{ block.settings.hover_scale }};
+            --hover-opacity: {{ block.settings.hover_opacity }};
+          "
+        >
+          {% if block.settings.image != blank %}
+            <img
+              src="{{ block.settings.image | image_url }}"
+              {% if block.settings.image.alt != blank %}
+                alt="{{ block.settings.image.alt | escape }}"
+              {% else %}
+                role="presentation"
+              {% endif %}
+              class="as-seen-on__logo"
+              height="auto"
+              width="auto"
+              loading="lazy"
+            >
+          {% endif %}
+        </div>
+        {% assign block_counter = block_counter | plus: 1 %}
+      {% endfor %}
+
+      {% if block_counter < target_total %}
+        {% for i in (1..15) %}
+          {% for block in section.blocks %}
+            <div
+              class="as-seen-on__item"
+              style="
+                background-color: {{ block.settings.background_color }};
+                padding: {{ block.settings.padding }}px;
+                border: {{ block.settings.border }};
+                box-shadow: {{ block.settings.box_shadow }};
+                --hover-scale: {{ block.settings.hover_scale }};
+                --hover-opacity: {{ block.settings.hover_opacity }};
+              "
+            >
+              {% if block.settings.image != blank %}
+                <img
+                  src="{{ block.settings.image | image_url }}"
+                  {% if block.settings.image.alt != blank %}
+                    alt="{{ block.settings.image.alt | escape }}"
+                  {% else %}
+                    role="presentation"
+                  {% endif %}
+                  class="as-seen-on__logo"
+                  height="auto"
+                  width="auto"
+                  loading="lazy"
+                >
+              {% endif %}
+            </div>
+            {% assign block_counter = block_counter | plus: 1 %}
+            {% if block_counter >= target_total %}
+              {% break %}
+            {% endif %}
+          {% endfor %}
+          {% if block_counter >= target_total %}
+            {% break %}
+          {% endif %}
+        {% endfor %}
+      {% endif %}
+    </div>
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const section = document.querySelector('.as-seen-on-{{ section.id }}');
+      if (section.dataset.pauseOnHover) {
+        section.addEventListener('mouseenter', () => {
+          section.querySelector('.as-seen-on__container').style.animationPlayState = 'paused';
+        });
+        section.addEventListener('mouseleave', () => {
+          section.querySelector('.as-seen-on__container').style.animationPlayState = 'running';
+        });
+      }
+
+      // Debug logo sizes
+      const logos = document.querySelectorAll('.as-seen-on__logo');
+      logos.forEach(logo => {
+        if (logo.offsetWidth !== logos[0].offsetWidth || logo.offsetHeight !== logos[0].offsetHeight) {
+          console.warn('Logo size inconsistency detected:', logo.src, logo.offsetWidth, logo.offsetHeight);
+        }
+      });
+    });
+  </script>
+
+  {%- style -%}
+    .section-{{ section.id }}-padding {
+      padding-top: {{ section.settings.mobile_padding_top }}px;
+      padding-bottom: {{ section.settings.mobile_padding_bottom }}px;
+    }
+
+    .as-seen-on-{{ section.id }} {
+      overflow-x: hidden;
+    }
+
+    .as-seen-on-{{ section.id }} .as-seen-on__container {
+      display: flex;
+      animation: revolve {{ 100 | divided_by: section.settings.mobile_speed }}s linear infinite forwards;
+      column-gap: var(--mobile-spacing);
+      white-space: nowrap;
+    }
+
+    .as-seen-on-{{ section.id }} .as-seen-on__item {
+      flex: 0 0 auto;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      transition: transform 0.3s ease, opacity 0.3s ease;
+      border-radius: {{ section.settings.border_radius }}px;
+      overflow: hidden;
+    }
+
+    .as-seen-on-{{ section.id }} .as-seen-on__item:hover {
+      transform: scale(var(--hover-scale));
+      opacity: var(--hover-opacity);
+    }
+
+    .as-seen-on-{{ section.id }} .as-seen-on__logo {
+      width: var(--logo-size);
+      height: var(--logo-size);
+      object-fit: contain;
+      border-radius: {{ section.settings.border_radius }}px;
+    }
+
+    .as-seen-on-{{ section.id }}-heading {
+      font-size: {{ section.settings.heading_size | divided_by: 10.0 }}rem;
+      font-weight: {{ section.settings.heading_weight }};
+      color: {{ section.settings.heading_color }};
+      margin-bottom: {{ section.settings.heading_margin }}px;
+      text-align: {{ section.settings.heading_alignment }};
+    }
+
+    @media screen and (min-width: 750px) and (max-width: 989px) {
+      .section-{{ section.id }}-padding {
+        padding-top: {{ section.settings.tablet_padding_top }}px;
+        padding-bottom: {{ section.settings.tablet_padding_bottom }}px;
+      }
+      .as-seen-on-{{ section.id }} .as-seen-on__container {
+        column-gap: var(--tablet-spacing);
+        animation: revolve {{ 100 | divided_by: section.settings.tablet_speed }}s linear infinite forwards;
+      }
+    }
+
+    @media screen and (min-width: 990px) {
+      .section-{{ section.id }}-padding {
+        padding-top: {{ section.settings.desktop_padding_top }}px;
+        padding-bottom: {{ section.settings.desktop_padding_bottom }}px;
+      }
+      .as-seen-on-{{ section.id }} .as-seen-on__container {
+        column-gap: var(--desktop-spacing);
+        animation: revolve {{ 100 | divided_by: section.settings.desktop_speed }}s linear infinite forwards;
+      }
+    }
+
+    .as-seen-on-{{ section.id }}.color-custom {
+      --color-background: {{ section.settings.custom_colors_background.red }}, {{ section.settings.custom_colors_background.green }}, {{ section.settings.custom_colors_background.blue }};
+      --gradient-background: {% if section.settings.custom_gradient_background != blank %}{{ section.settings.custom_gradient_background }}{% else %}{{ section.settings.custom_colors_background }}{% endif %};
+      --color-foreground: {{ section.settings.custom_colors_text.red }}, {{ section.settings.custom_colors_text.green }}, {{ section.settings.custom_colors_text.blue }};
+    }
+
+    @keyframes revolve {
+      0% { transform: translateX(0); }
+      100% { transform: translateX(-50%); }
+    }
+  {%- endstyle -%}
+{% endif %}
+
+{% schema %}
+{
+  "name": "As Seen On",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Visibility"
+    },
+    {
+      "type": "select",
+      "id": "visibility",
+      "options": [
+        { "value": "desktop-hidden", "label": "Mobile only" },
+        { "value": "mobile-hidden", "label": "Desktop only" },
+        { "value": "tablet-hidden", "label": "Mobile and Desktop only" },
+        { "value": "always-display", "label": "All devices" }
+      ],
+      "label": "Display on",
+      "default": "always-display"
+    },
+    {
+      "type": "text",
+      "id": "hidden_products",
+      "label": "Hide on product pages",
+      "info": "Comma-separated product handles"
+    },
+    {
+      "type": "text",
+      "id": "hidden_collections",
+      "label": "Hide on collection pages",
+      "info": "Comma-separated collection handles"
+    },
+    {
+      "type": "text",
+      "id": "hidden_tags",
+      "label": "Hide on products with tags",
+      "info": "Comma-separated tags"
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_specific_display",
+      "label": "Show only on specific products",
+      "default": false
+    },
+    {
+      "type": "text",
+      "id": "displayed_products",
+      "label": "Show on specific products",
+      "info": "Comma-separated product handles (if above is checked)"
+    },
+    {
+      "type": "header",
+      "content": "Heading"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "As Seen On"
+    },
+    {
+      "type": "select",
+      "id": "heading_alignment",
+      "options": [
+        { "value": "left", "label": "Left" },
+        { "value": "center", "label": "Center" },
+        { "value": "right", "label": "Right" }
+      ],
+      "default": "center",
+      "label": "Heading alignment"
+    },
+    {
+      "type": "range",
+      "id": "heading_size",
+      "min": 10,
+      "max": 60,
+      "step": 2,
+      "unit": "px",
+      "default": 24,
+      "label": "Heading size"
+    },
+    {
+      "type": "select",
+      "id": "heading_weight",
+      "options": [
+        { "value": "400", "label": "Normal" },
+        { "value": "600", "label": "Semi-bold" },
+        { "value": "700", "label": "Bold" }
+      ],
+      "default": "700",
+      "label": "Heading weight"
+    },
+    {
+      "type": "color",
+      "id": "heading_color",
+      "default": "#2E2A39",
+      "label": "Heading color"
+    },
+    {
+      "type": "range",
+      "id": "heading_margin",
+      "min": 0,
+      "max": 50,
+      "step": 2,
+      "unit": "px",
+      "default": 20,
+      "label": "Heading bottom margin"
+    },
+    {
+      "type": "header",
+      "content": "Carousel Animation"
+    },
+    {
+      "type": "range",
+      "id": "mobile_speed",
+      "min": 0.5,
+      "max": 10,
+      "step": 0.5,
+      "default": 2,
+      "label": "Mobile speed"
+    },
+    {
+      "type": "range",
+      "id": "tablet_speed",
+      "min": 0.5,
+      "max": 10,
+      "step": 0.5,
+      "default": 2,
+      "label": "Tablet speed"
+    },
+    {
+      "type": "range",
+      "id": "desktop_speed",
+      "min": 0.5,
+      "max": 10,
+      "step": 0.5,
+      "default": 2,
+      "label": "Desktop speed"
+    },
+    {
+      "type": "select",
+      "id": "animation_direction",
+      "options": [
+        { "value": "normal", "label": "Left to Right" },
+        { "value": "reverse", "label": "Right to Left" }
+      ],
+      "default": "normal",
+      "label": "Animation direction"
+    },
+    {
+      "type": "checkbox",
+      "id": "pause_on_hover",
+      "label": "Pause on hover",
+      "default": true
+    },
+    {
+      "type": "header",
+      "content": "Logo Styling"
+    },
+    {
+      "type": "range",
+      "id": "logo_size",
+      "min": 50,
+      "max": 200,
+      "step": 10,
+      "unit": "px",
+      "default": 100,
+      "label": "Logo size (all devices)"
+    },
+    {
+      "type": "range",
+      "id": "mobile_spacing",
+      "min": 10,
+      "max": 100,
+      "step": 5,
+      "unit": "px",
+      "default": 20,
+      "label": "Mobile logo spacing"
+    },
+    {
+      "type": "range",
+      "id": "tablet_spacing",
+      "min": 10,
+      "max": 100,
+      "step": 5,
+      "unit": "px",
+      "default": 30,
+      "label": "Tablet logo spacing"
+    },
+    {
+      "type": "range",
+      "id": "desktop_spacing",
+      "min": 10,
+      "max": 100,
+      "step": 5,
+      "unit": "px",
+      "default": 40,
+      "label": "Desktop logo spacing"
+    },
+    {
+      "type": "range",
+      "id": "border_radius",
+      "min": 0,
+      "max": 50,
+      "step": 2,
+      "unit": "px",
+      "default": 10,
+      "label": "Logo border radius",
+      "info": "Set the roundness of logo container edges"
+    },
+    {
+      "type": "header",
+      "content": "Padding"
+    },
+    {
+      "type": "range",
+      "id": "mobile_padding_top",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "Mobile padding top",
+      "default": 12
+    },
+    {
+      "type": "range",
+      "id": "mobile_padding_bottom",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "Mobile padding bottom",
+      "default": 12
+    },
+    {
+      "type": "range",
+      "id": "tablet_padding_top",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "Tablet padding top",
+      "default": 16
+    },
+    {
+      "type": "range",
+      "id": "tablet_padding_bottom",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "Tablet padding bottom",
+      "default": 16
+    },
+    {
+      "type": "range",
+      "id": "desktop_padding_top",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "Desktop padding top",
+      "default": 20
+    },
+    {
+      "type": "range",
+      "id": "desktop_padding_bottom",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "Desktop padding bottom",
+      "default": 20
+    },
+    {
+      "type": "header",
+      "content": "Color Scheme"
+    },
+    {
+      "type": "select",
+      "id": "color_scheme",
+      "options": [
+        { "value": "accent-1", "label": "Accent 1" },
+        { "value": "accent-2", "label": "Accent 2" },
+        { "value": "background-1", "label": "Background 1" },
+        { "value": "background-2", "label": "Background 2" },
+        { "value": "inverse", "label": "Inverse" },
+        { "value": "custom", "label": "Custom" }
+      ],
+      "default": "background-1",
+      "label": "Color scheme"
+    },
+    {
+      "type": "color",
+      "id": "custom_colors_background",
+      "default": "#FFFFFF",
+      "label": "Custom background color"
+    },
+    {
+      "type": "color_background",
+      "id": "custom_gradient_background",
+      "label": "Custom gradient background"
+    },
+    {
+      "type": "color",
+      "id": "custom_colors_text",
+      "default": "#2E2A39",
+      "label": "Custom text color"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "logo",
+      "name": "Logo",
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Logo image",
+          "info": "Upload the company logo."
+        },
+        {
+          "type": "color",
+          "id": "background_color",
+          "default": "transparent",
+          "label": "Item background color"
+        },
+        {
+          "type": "text",
+          "id": "padding",
+          "default": "10",
+          "label": "Item padding (px)",
+          "info": "E.g., '10' for 10px on all sides"
+        },
+        {
+          "type": "text",
+          "id": "border",
+          "default": "none",
+          "label": "Item border",
+          "info": "E.g., '1px solid #000'"
+        },
+        {
+          "type": "text",
+          "id": "box_shadow",
+          "default": "0 2px 4px rgba(0,0,0,0.1)",
+          "label": "Item box shadow",
+          "info": "E.g., '0 2px 4px rgba(0,0,0,0.1)'"
+        },
+        {
+          "type": "range",
+          "id": "hover_scale",
+          "min": 1,
+          "max": 1.5,
+          "step": 0.1,
+          "default": 1.1,
+          "label": "Hover scale"
+        },
+        {
+          "type": "range",
+          "id": "hover_opacity",
+          "min": 0.5,
+          "max": 1,
+          "step": 0.1,
+          "default": 0.9,
+          "label": "Hover opacity"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "As Seen On",
+      "blocks": [
+        { "type": "logo" },
+        { "type": "logo" },
+        { "type": "logo" }
+      ]
+    }
+  ]
+}
+{% endschema %}

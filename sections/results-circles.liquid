@@ -1,0 +1,509 @@
+{% comment %}
+  Results and Percentages Section for Shopify
+  Fully editable text, sizes, and colors with inline CSS and JS
+  No external dependencies required
+  Fixed mobile header/subheading to ensure header is above subheading
+{% endcomment %}
+
+<style>
+  #results {
+    padding: 4rem 0;
+    {% if section.settings.background_type == 'gradient' %}
+      background: linear-gradient({{ section.settings.gradient_angle }}deg, {{ section.settings.gradient_color1 }} 0%, {{ section.settings.gradient_color2 }} 100%);
+    {% else %}
+      background: {{ section.settings.solid_color }};
+    {% endif %}
+    color: #ffffff;
+  }
+  #results .container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 1rem;
+  }
+  #results .header {
+    text-align: center;
+    margin-bottom: 3rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  #results .header h2 {
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+    order: 1;
+  }
+  #results .header p {
+    font-size: 1.25rem;
+    color: #e5e7eb;
+    max-width: 600px;
+    margin: 0;
+    order: 2;
+  }
+  #results .progress-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 2rem;
+    justify-items: center;
+  }
+  #results .progress-item {
+    text-align: center;
+    max-width: 300px;
+  }
+  #results .progress-circle {
+    position: relative;
+    margin: 0 auto 1rem;
+  }
+  #results .progress-circle svg {
+    width: 100%;
+    height: 100%;
+    transform: rotate(-90deg);
+  }
+  #results .progress-circle .background-circle {
+    fill: none;
+    stroke: #e5e7eb;
+    stroke-width: 10;
+  }
+  #results .progress-circle .progress-ring {
+    fill: none;
+    stroke: {{ section.settings.progress_color }};
+    stroke-width: 10;
+    stroke-linecap: round;
+    transition: stroke-dashoffset 1.5s ease;
+  }
+  #results .progress-circle .percentage {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #ffffff;
+  }
+  #results .progress-item h3 {
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+  }
+  #results .progress-item p {
+    font-size: 1rem;
+    color: #e5e7eb;
+  }
+  /* Mobile Styles */
+  @media (max-width: 767px) {
+    #results .header h2.desktop-heading, #results .header p.desktop-subheading { display: none; }
+    #results .header h2.mobile-heading, #results .header p.mobile-subheading { display: block; }
+    #results .header h2 {
+      font-size: {{ section.settings.mobile_heading_size }}px;
+      order: 1;
+    }
+    #results .header p {
+      font-size: {{ section.settings.mobile_subheading_size }}px;
+      order: 2;
+    }
+    #results .progress-circle {
+      width: {{ section.settings.mobile_circle_size }}px;
+      height: {{ section.settings.mobile_circle_size }}px;
+    }
+    #results .progress-circle .percentage {
+      font-size: {{ section.settings.mobile_percentage_size }}px;
+    }
+    #results .progress-item h3 {
+      font-size: {{ section.settings.mobile_label_size }}px;
+    }
+    #results .progress-item p {
+      font-size: {{ section.settings.mobile_description_size }}px;
+    }
+  }
+  /* Desktop Styles */
+  @media (min-width: 768px) {
+    #results .progress-grid {
+      grid-template-columns: repeat(3, 1fr);
+    }
+    #results .header h2.mobile-heading, #results .header p.mobile-subheading { display: none; }
+    #results .header h2.desktop-heading, #results .header p.desktop-subheading { display: block; }
+    #results .header h2 {
+      font-size: {{ section.settings.desktop_heading_size }}px;
+    }
+    #results .header p {
+      font-size: {{ section.settings.desktop_subheading_size }}px;
+    }
+    #results .progress-circle {
+      width: {{ section.settings.desktop_circle_size }}px;
+      height: {{ section.settings.desktop_circle_size }}px;
+    }
+    #results .progress-circle .percentage {
+      font-size: {{ section.settings.desktop_percentage_size }}px;
+    }
+    #results .progress-item h3 {
+      font-size: {{ section.settings.desktop_label_size }}px;
+    }
+    #results .progress-item p {
+      font-size: {{ section.settings.desktop_description_size }}px;
+    }
+  }
+</style>
+
+{% schema %}
+{
+  "name": "Results Section",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Background Settings"
+    },
+    {
+      "type": "select",
+      "id": "background_type",
+      "label": "Background Type",
+      "options": [
+        { "value": "solid", "label": "Solid Color" },
+        { "value": "gradient", "label": "Gradient" }
+      ],
+      "default": "gradient"
+    },
+    {
+      "type": "color",
+      "id": "solid_color",
+      "label": "Solid Background Color",
+      "default": "#1e3a8a"
+    },
+    {
+      "type": "color",
+      "id": "gradient_color1",
+      "label": "Gradient Color 1",
+      "default": "#1e3a8a"
+    },
+    {
+      "type": "color",
+      "id": "gradient_color2",
+      "label": "Gradient Color 2",
+      "default": "#3b82f6"
+    },
+    {
+      "type": "range",
+      "id": "gradient_angle",
+      "label": "Gradient Angle (degrees)",
+      "min": 0,
+      "max": 360,
+      "step": 5,
+      "default": 135
+    },
+    {
+      "type": "color",
+      "id": "progress_color",
+      "label": "Progress Ring Color",
+      "default": "#22c55e"
+    },
+    {
+      "type": "header",
+      "content": "Desktop Text Settings"
+    },
+    {
+      "type": "text",
+      "id": "desktop_heading",
+      "label": "Desktop Heading",
+      "default": "Our Results in Percentages"
+    },
+    {
+      "type": "range",
+      "id": "desktop_heading_size",
+      "label": "Desktop Heading Size (px)",
+      "min": 20,
+      "max": 60,
+      "step": 1,
+      "default": 48
+    },
+    {
+      "type": "text",
+      "id": "desktop_subheading",
+      "label": "Desktop Subheading",
+      "default": "Showcasing our achievements through key performance metrics."
+    },
+    {
+      "type": "range",
+      "id": "desktop_subheading_size",
+      "label": "Desktop Subheading Size (px)",
+      "min": 12,
+      "max": 36,
+      "step": 1,
+      "default": 20
+    },
+    {
+      "type": "range",
+      "id": "desktop_circle_size",
+      "label": "Desktop Circle Size (px)",
+      "min": 100,
+      "max": 300,
+      "step": 5,
+      "default": 150
+    },
+    {
+      "type": "range",
+      "id": "desktop_percentage_size",
+      "label": "Desktop Percentage Text Size (px)",
+      "min": 12,
+      "max": 36,
+      "step": 1,
+      "default": 24
+    },
+    {
+      "type": "range",
+      "id": "desktop_label_size",
+      "label": "Desktop Label Size (px)",
+      "min": 12,
+      "max": 36,
+      "step": 1,
+      "default": 20
+    },
+    {
+      "type": "range",
+      "id": "desktop_description_size",
+      "label": "Desktop Description Size (px)",
+      "min": 10,
+      "max": 24,
+      "step": 1,
+      "default": 16
+    },
+    {
+      "type": "header",
+      "content": "Mobile Text Settings"
+    },
+    {
+      "type": "text",
+      "id": "mobile_heading",
+      "label": "Mobile Heading",
+      "default": "Our Results"
+    },
+    {
+      "type": "range",
+      "id": "mobile_heading_size",
+      "label": "Mobile Heading Size (px)",
+      "min": 16,
+      "max": 48,
+      "step": 1,
+      "default": 32
+    },
+    {
+      "type": "text",
+      "id": "mobile_subheading",
+      "label": "Mobile Subheading",
+      "default": "Key performance metrics."
+    },
+    {
+      "type": "range",
+      "id": "mobile_subheading_size",
+      "label": "Mobile Subheading Size (px)",
+      "min": 10,
+      "max": 24,
+      "step": 1,
+      "default": 16
+    },
+    {
+      "type": "range",
+      "id": "mobile_circle_size",
+      "label": "Mobile Circle Size (px)",
+      "min": 80,
+      "max": 200,
+      "step": 5,
+      "default": 120
+    },
+    {
+      "type": "range",
+      "id": "mobile_percentage_size",
+      "label": "Mobile Percentage Text Size (px)",
+      "min": 10,
+      "max": 24,
+      "step": 1,
+      "default": 18
+    },
+    {
+      "type": "range",
+      "id": "mobile_label_size",
+      "label": "Mobile Label Size (px)",
+      "min": 10,
+      "max": 24,
+      "step": 1,
+      "default": 16
+    },
+    {
+      "type": "range",
+      "id": "mobile_description_size",
+      "label": "Mobile Description Size (px)",
+      "min": 8,
+      "max": 20,
+      "step": 1,
+      "default": 14
+    },
+    {
+      "type": "header",
+      "content": "Progress Metrics"
+    },
+    {
+      "type": "range",
+      "id": "stat_1_percentage",
+      "label": "Stat 1 Percentage",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "default": 85
+    },
+    {
+      "type": "text",
+      "id": "stat_1_label",
+      "label": "Stat 1 Label",
+      "default": "Customer Satisfaction"
+    },
+    {
+      "type": "text",
+      "id": "stat_1_description",
+      "label": "Stat 1 Description",
+      "default": "Delivering exceptional experiences."
+    },
+    {
+      "type": "range",
+      "id": "stat_2_percentage",
+      "label": "Stat 2 Percentage",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "default": 92
+    },
+    {
+      "type": "text",
+      "id": "stat_2_label",
+      "label": "Stat 2 Label",
+      "default": "On-Time Delivery"
+    },
+    {
+      "type": "text",
+      "id": "stat_2_description",
+      "label": "Stat 2 Description",
+      "default": "Ensuring prompt shipments."
+    },
+    {
+      "type": "range",
+      "id": "stat_3_percentage",
+      "label": "Stat 3 Percentage",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "default": 78
+    },
+    {
+      "type": "text",
+      "id": "stat_3_label",
+      "label": "Stat 3 Label",
+      "default": "Return Customers"
+    },
+    {
+      "type": "text",
+      "id": "stat_3_description",
+      "label": "Stat 3 Description",
+      "default": "Building lasting relationships."
+    }
+  ],
+  "presets": [
+    {
+      "name": "Results Section"
+    }
+  ]
+}
+{% endschema %}
+
+<section id="results">
+  <div class="container">
+    <!-- Section Header -->
+    <div class="header">
+      <h2 class="desktop-heading">{{ section.settings.desktop_heading }}</h2>
+      <h2 class="mobile-heading">{{ section.settings.mobile_heading }}</h2>
+      <p class="desktop-subheading">{{ section.settings.desktop_subheading }}</p>
+      <p class="mobile-subheading">{{ section.settings.mobile_subheading }}</p>
+    </div>
+    <!-- Progress Grid -->
+    <div class="progress-grid">
+      <!-- Progress Item 1 -->
+      <div class="progress-item">
+        <div class="progress-circle">
+          <svg>
+            <circle class="background-circle" cx="50%" cy="50%" r="45%"></circle>
+            <circle class="progress-ring" cx="50%" cy="50%" r="45%" data-percentage="{{ section.settings.stat_1_percentage }}"></circle>
+          </svg>
+          <div class="percentage">0%</div>
+        </div>
+        <h3>{{ section.settings.stat_1_label }}</h3>
+        <p>{{ section.settings.stat_1_description }}</p>
+      </div>
+      <!-- Progress Item 2 -->
+      <div class="progress-item">
+        <div class="progress-circle">
+          <svg>
+            <circle class="background-circle" cx="50%" cy="50%" r="45%"></circle>
+            <circle class="progress-ring" cx="50%" cy="50%" r="45%" data-percentage="{{ section.settings.stat_2_percentage }}"></circle>
+          </svg>
+          <div class="percentage">0%</div>
+        </div>
+        <h3>{{ section.settings.stat_2_label }}</h3>
+        <p>{{ section.settings.stat_2_description }}</p>
+      </div>
+      <!-- Progress Item 3 -->
+      <div class="progress-item">
+        <div class="progress-circle">
+          <svg>
+            <circle class="background-circle" cx="50%" cy="50%" r="45%"></circle>
+            <circle class="progress-ring" cx="50%" cy="50%" r="45%" data-percentage="{{ section.settings.stat_3_percentage }}"></circle>
+          </svg>
+          <div class="percentage">0%</div>
+        </div>
+        <h3>{{ section.settings.stat_3_label }}</h3>
+        <p>{{ section.settings.stat_3_description }}</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const circles = document.querySelectorAll('.progress-ring');
+    const percentages = document.querySelectorAll('.percentage');
+
+    const animateProgress = (circle, percentageText, target) => {
+      const radius = parseFloat(circle.getAttribute('r')) / 100 * circle.parentElement.clientWidth;
+      const circumference = 2 * Math.PI * radius;
+      circle.style.strokeDasharray = `${circumference} ${circumference}`;
+      circle.style.strokeDashoffset = circumference;
+
+      let current = 0;
+      const increment = target / 100;
+
+      const updateProgress = () => {
+        if (current < target) {
+          current += increment;
+          const offset = circumference - (current / 100) * circumference;
+          circle.style.strokeDashoffset = offset;
+          percentageText.innerText = `${Math.round(current)}%`;
+          setTimeout(updateProgress, 20);
+        } else {
+          percentageText.innerText = `${target}%`;
+        }
+      };
+      updateProgress();
+    };
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          const circle = entry.target.querySelector('.progress-ring');
+          const percentageText = entry.target.querySelector('.percentage');
+          const target = +circle.getAttribute('data-percentage');
+          animateProgress(circle, percentageText, target);
+          observer.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.5 });
+
+    circles.forEach((circle, index) => {
+      observer.observe(circle.parentElement.parentElement);
+    });
+  });
+</script>

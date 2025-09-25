@@ -1,0 +1,221 @@
+{% layout 'theme' %}
+
+<div class="template-404 page-margin center">
+  <div class="template-404__container">
+    <header class="template-404__header">
+      {%- if settings.logo != blank -%}
+        {%- assign logo_alt = settings.logo.alt | default: shop.name | escape -%}
+        {{
+          settings.logo
+          | image_url: width: 150
+          | image_tag: class: 'template-404__logo', alt: logo_alt, loading: 'eager'
+        }}
+      {%- else -%}
+      {%- endif -%}
+      <h1 class="template-404__title">404</h1>
+    </header>
+    <div class="template-404__content">
+      <p class="template-404__subtext">
+        {{ 'templates.404.subtext' | t }}
+        <span class="template-404__highlight">ERROR</span> ERROR
+      </p>
+      <div class="template-404__image-wrapper">
+        {%- if settings.logo != blank -%}
+        {%- else -%}
+          <img
+            class="template-404__image"
+            src="{{ '404-graphic.png' | asset_url }}"
+            alt="404 Error"
+            height="267"
+            width="400"
+            loading="eager"
+          >
+        {%- endif -%}
+      </div>
+      <div class="template-404__buttons">
+        <a href="{{ routes.all_products_collection_url }}" class="button template-404__button">
+          {{ 'general.continue_shopping' | t }}
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;700&display=swap');
+
+  .template-404 {
+    background: #000000;
+    color: #FFFFFF;
+    font-family: 'DM Sans', sans-serif;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px 16px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .template-404__container {
+    max-width: 600px;
+    width: 100%;
+    text-align: center;
+  }
+
+  .template-404__header {
+    margin-bottom: 24px;
+  }
+
+  .template-404__logo {
+    max-width: 150px;
+    margin: 0 auto 16px;
+    font-size: 24px;
+    font-weight: 700;
+    color: #FFFFFF;
+  }
+
+  .template-404__title {
+    font-size: 48px;
+    font-weight: 700;
+    color: #003e80;
+    margin: 0;
+    position: relative;
+    display: inline-block;
+    animation: glitch 2s linear infinite alternate;
+  }
+
+  @keyframes glitch {
+    0%, 20%, 40%, 60%, 80% {
+      transform: translate(0, 0);
+      text-shadow: 0.05em 0 0 #003e80, -0.05em 0 0 #FFFFFF;
+    }
+    10%, 30%, 50%, 70%, 90% {
+      transform: translate(2px, -2px);
+      text-shadow: -0.05em 0 0 #003e80, 0.05em 0 0 #FFFFFF;
+    }
+  }
+
+  .template-404__subtext {
+    font-size: 16px;
+    font-weight: 400;
+    color: #CCCCCC;
+    margin: 0 0 24px;
+  }
+
+  .template-404__highlight {
+    color: #003e80;
+    font-weight: 700;
+  }
+
+  .template-404__image-wrapper {
+    max-width: 400px;
+    margin: 0 auto 24px;
+    border: 1.5px solid #777;
+    border-radius: 8px;
+    overflow: hidden;
+  }
+
+  .template-404__image {
+    width: 100%;
+    height: auto;
+    display: block;
+  }
+
+  .template-404__buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    justify-content: center;
+  }
+
+  .button {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    font-weight: 700;
+    padding: 12px 24px;
+    border-radius: 8px;
+    border: 1.5px solid #003e80;
+    background: #000000;
+    color: #FFFFFF;
+    text-decoration: none;
+    cursor: pointer;
+    transition: none;
+    text-align: center;
+  }
+
+  .button--secondary {
+    border-color: #777;
+    background: transparent;
+  }
+
+  .button:focus {
+    outline: 2px solid #FFFFFF;
+    outline-offset: 2px;
+  }
+
+  .template-404::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(circle, rgba(241,44,52,0.1) 0%, transparent 70%);
+    opacity: 0.3;
+    z-index: -1;
+    animation: pulse 10s infinite;
+  }
+
+  @keyframes pulse {
+    0%, 100% {
+      transform: scale(1);
+      opacity: 0.3;
+    }
+    50% {
+      transform: scale(1.2);
+      opacity: 0.5;
+    }
+  }
+
+  @media (max-width: 768px) {
+    .template-404 {
+      padding: 16px 12px;
+    }
+
+    .template-404__title {
+      font-size: 36px;
+    }
+
+    .template-404__subtext {
+      font-size: 14px;
+    }
+
+    .template-404__image-wrapper {
+      max-width: 300px;
+    }
+
+    .button {
+      font-size: 13px;
+      padding: 10px 20px;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .template-404__container {
+      max-width: 95%;
+    }
+
+    .template-404__buttons {
+      flex-direction: column;
+    }
+
+    .button {
+      width: 100%;
+    }
+
+    .template-404::before {
+      animation-duration: 15s; /* Slower pulse for mobile */
+    }
+  }
+</style>

@@ -1,0 +1,531 @@
+{% comment %}
+  Horizontal Ticker Section for Titan | AI Store Builder
+  Displays a scrolling ticker with text or images, customizable for speed, spacing, and visibility.
+  Includes heading, color schemes, and product-specific display logic.
+  Made section full-page, removed header border, and added customizable ticker text font weight and size.
+  Ticker text uses Montserrat, customizable weight (400–900), and independent font sizes.
+  Header retains Montserrat, 700 weight, #2E2A39, 32px desktop, 24px mobile.
+  Aligned with Beast Bites aesthetic (#FF3C00 accents, clean layout).
+{% endcomment %}
+
+{%- style -%}
+  .section-{{ section.id }}-padding {
+    padding-top: {{ section.settings.mobile_padding_top }}px;
+    padding-bottom: {{ section.settings.mobile_padding_bottom }}px;
+  }
+
+  .horizontal-ticker-{{ section.id }} {
+    width: 100%;
+    margin: 0;
+    padding-left: 0;
+    padding-right: 0;
+  }
+
+  .horizontal-ticker-{{ section.id }} .horizontal-ticker__container {
+    animation: horTicker {{ 150 | divided_by: section.settings.speed }}s linear infinite forwards;
+    column-gap: {{ section.settings.mobile_spacing }}px;
+    padding: 0 15px;
+  }
+
+  .horizontal-ticker-{{ section.id }} .custom-font-size {
+   font-family: var(--font-heading-family);
+    font-weight: {{ section.settings.text_font_weight }};
+    color: var(--color-foreground, #2E2A39);
+    letter-spacing: 0.02em;
+  }
+
+  @media screen and (max-width: 749px) {
+    .horizontal-ticker-{{ section.id }} .custom-font-size {
+      font-size: var(--mobile-text-font-size);
+    }
+    .horizontal-ticker-{{ section.id }}-heading {
+      font-size: var(--mobile-header-font-size);
+    }
+  }
+
+  @media screen and (min-width: 750px) {
+    .section-{{ section.id }}-padding {
+      padding-top: {{ section.settings.desktop_padding_top }}px;
+      padding-bottom: {{ section.settings.desktop_padding_bottom }}px;
+    }
+    .horizontal-ticker-{{ section.id }} .horizontal-ticker__container {
+      column-gap: {{ section.settings.desktop_spacing }}px;
+    }
+    .horizontal-ticker-{{ section.id }} .custom-font-size {
+      font-size: var(--text-font-size);
+    }
+    .horizontal-ticker-{{ section.id }}-heading {
+      font-size: var(--header-font-size);
+    }
+  }
+
+  .horizontal-ticker-{{ section.id }}.color-custom {
+    --color-background: {{ section.settings.custom_colors_background.red }}, {{ section.settings.custom_colors_background.green }}, {{ section.settings.custom_colors_background.blue }};
+    --gradient-background: {% if section.settings.custom_gradient_background != blank %}{{ section.settings.custom_gradient_background }}{% else %}{{ section.settings.custom_colors_background }}{% endif %};
+    --color-foreground: {{ section.settings.custom_colors_text.red }}, {{ section.settings.custom_colors_text.green }}, {{ section.settings.custom_colors_text.blue }};
+  }
+
+  /* Center and style the heading */
+  .horizontal-ticker-{{ section.id }}-heading {
+    text-align: center;
+    margin-bottom: 24px;
+   font-family: var(--font-heading-family);
+    font-weight: 700;
+    color: var(--color-foreground, #2E2A39);
+    letter-spacing: 0.02em;
+  }
+{%- endstyle -%}
+
+{% liquid
+  assign displayed = true
+  if section.settings.hidden_products != blank
+    assign hidden_handles = section.settings.hidden_products | split: ','
+    for hidden_handle in hidden_handles
+      assign handle_strip = hidden_handle | strip
+      if handle_strip == product.handle
+        assign displayed = false
+        break
+      endif
+    endfor
+  endif
+  if section.settings.enable_specific_display and section.settings.displayed_products != blank
+    assign displayed_handles = section.settings.displayed_products | split: ','
+    assign displayed = false
+    for displayed_handle in displayed_handles
+      assign handle_strip = displayed_handle | strip
+      if handle_strip == product.handle
+        assign displayed = true
+        break
+      endif
+    endfor
+  endif
+%}
+
+{% if displayed %}
+  <div
+    class="horizontal-ticker horizontal-ticker-{{ section.id }} color-{{ section.settings.color_scheme }} gradient section-{{ section.id }}-padding {{ section.settings.visibility }}"
+    style="
+      --mobile-text-font-size: {{ section.settings.mobile_text_font_size | divided_by: 10.0 }}rem;
+      --text-font-size: {{ section.settings.text_font_size | divided_by: 10.0 }}rem;
+      --mobile-image-height: {{ section.settings.mobile_image_height | divided_by: 10.0 }}rem;
+      --desktop-image-height: {{ section.settings.desktop_image_height | divided_by: 10.0 }}rem;
+      --header-font-size: {{ section.settings.header_font_size | divided_by: 10.0 }}rem;
+      --mobile-header-font-size: {{ section.settings.mobile_header_font_size | divided_by: 10.0 }}rem;
+    "
+  >
+    {% if section.settings.heading != blank %}
+      <h2 class="horizontal-ticker-{{ section.id }}-heading">{{ section.settings.heading }}</h2>
+    {% endif %}
+    <div class="horizontal-ticker__container">
+      {% assign unique_blocks_total = section.blocks | size %}
+      {% assign target_multiply = 20 | divided_by: unique_blocks_total | floor %}
+      {% assign target_total = unique_blocks_total | times: target_multiply | times: 2 %}
+      {% assign block_counter = 0 %}
+
+      {%- for block in section.blocks -%}
+        {%- assign block_counter = block_counter | plus: 1 -%}
+        {% if block.type == 'text' %}
+          <p
+            class="custom-font-size horizontal-ticker__item{% if section.settings.italic_text %} horizontal-ticker__item--italic{% endif %}{% if section.settings.uppercase_text %} horizontal-ticker__item--uppercase{% endif %}"
+            data-block-id="{{ block.id }}"
+          >
+            {{ block.settings.title | escape }}
+          </p>
+        {% else %}
+          <img
+            src="{{ block.settings.image | image_url }}"
+            {% if block.settings.image.alt != blank %}
+              alt="{{ block.settings.image.alt | escape }}"
+            {% else %}
+              role="presentation"
+            {% endif %}
+            class="custom-image-height"
+            height="auto"
+            width="auto"
+            loading="lazy"
+          >
+        {% endif %}
+      {%- endfor -%}
+
+      {%- if block_counter < target_total -%}
+        {% for i in (1..15) %}
+          {% for block in section.blocks %}
+            {% if block.type == 'text' %}
+              <p
+                class="custom-font-size horizontal-ticker__item{% if section.settings.italic_text %} horizontal-ticker__item--italic{% endif %}{% if section.settings.uppercase_text %} horizontal-ticker__item--uppercase{% endif %}"
+                data-block-id="{{ block.id }}"
+              >
+                {{ block.settings.title | escape }}
+              </p>
+            {% else %}
+              <img
+                src="{{ block.settings.image | image_url }}"
+                {% if block.settings.image.alt != blank %}
+                  alt="{{ block.settings.image.alt | escape }}"
+                {% else %}
+                  role="presentation"
+                {% endif %}
+                class="custom-image-height"
+                height="auto"
+                width="auto"
+                loading="lazy"
+              >
+            {% endif %}
+
+            {% assign block_counter = block_counter | plus: 1 %}
+            {% if block_counter >= target_total %}
+              {% break %}
+            {% endif %}
+          {% endfor %}
+          {% if block_counter >= target_total %}
+            {% break %}
+          {% endif %}
+        {% endfor %}
+      {%- endif -%}
+    </div>
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const textItems = document.querySelectorAll('.horizontal-ticker-{{ section.id }} .custom-font-size');
+      textItems.forEach(item => {
+        const fontSize = getComputedStyle(item).fontSize;
+        const fontWeight = getComputedStyle(item).fontWeight;
+        const letterSpacing = getComputedStyle(item).letterSpacing;
+        console.log(`Ticker text block [${item.dataset.blockId}]: font-size = ${fontSize}, font-weight = ${fontWeight}, letter-spacing = ${letterSpacing}`);
+      });
+      const heading = document.querySelector('.horizontal-ticker-{{ section.id }}-heading');
+      if (heading) {
+        const fontSize = getComputedStyle(heading).fontSize;
+        const fontWeight = getComputedStyle(heading).fontWeight;
+        const letterSpacing = getComputedStyle(heading).letterSpacing;
+        console.log(`Ticker heading: font-size = ${fontSize}, font-weight = ${fontWeight}, letter-spacing = ${letterSpacing}`);
+      });
+    });
+  </script>
+{% endif %}
+
+{% schema %}
+{
+  "name": "Horizontal Ticker",
+  "settings": [
+    {
+      "type": "select",
+      "id": "visibility",
+      "options": [
+        {
+          "value": "desktop-hidden",
+          "label": "Mobile only"
+        },
+        {
+          "value": "mobile-hidden",
+          "label": "Desktop only"
+        },
+        {
+          "value": "always-display",
+          "label": "All devices"
+        }
+      ],
+      "label": "Display on",
+      "default": "always-display"
+    },
+    {
+      "type": "header",
+      "content": "Heading"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Ticker Heading"
+    },
+    {
+      "type": "range",
+      "id": "header_font_size",
+      "min": 20,
+      "max": 48,
+      "step": 2,
+      "unit": "px",
+      "label": "Header font size (Desktop)",
+      "default": 32
+    },
+    {
+      "type": "range",
+      "id": "mobile_header_font_size",
+      "min": 16,
+      "max": 36,
+      "step": 2,
+      "unit": "px",
+      "label": "Header font size (Mobile)",
+      "default": 24
+    },
+    {
+      "type": "header",
+      "content": "Ticker"
+    },
+    {
+      "type": "range",
+      "id": "speed",
+      "label": "Ticker speed",
+      "min": 1,
+      "max": 5,
+      "default": 3,
+      "step": 0.5
+    },
+    {
+      "type": "number",
+      "id": "mobile_spacing",
+      "label": "Mobile spacing (px)",
+      "default": 60
+    },
+    {
+      "type": "number",
+      "id": "desktop_spacing",
+      "label": "Desktop spacing (px)",
+      "default": 100
+    },
+    {
+      "type": "select",
+      "id": "color_scheme",
+      "options": [
+        {
+          "value": "accent-1",
+          "label": "Accent 1"
+        },
+        {
+          "value": "accent-2",
+          "label": "Accent 2"
+        },
+        {
+          "value": "background-1",
+          "label": "Background 1"
+        },
+        {
+          "value": "background-2",
+          "label": "Background 2"
+        },
+        {
+          "value": "inverse",
+          "label": "Inverse"
+        },
+        {
+          "value": "custom",
+          "label": "Custom"
+        }
+      ],
+      "default": "background-1",
+      "label": "Color scheme",
+      "info": "Custom color scheme is edited at the bottom of section settings."
+    },
+    {
+      "type": "header",
+      "content": "Text"
+    },
+    {
+      "type": "range",
+      "id": "text_font_size",
+      "min": 10,
+      "max": 40,
+      "step": 1,
+      "unit": "px",
+      "label": "Ticker text font size (Desktop)",
+      "default": 18
+    },
+    {
+      "type": "range",
+      "id": "mobile_text_font_size",
+      "min": 8,
+      "max": 30,
+      "step": 1,
+      "unit": "px",
+      "label": "Ticker text font size (Mobile)",
+      "default": 16
+    },
+    {
+      "type": "range",
+      "id": "text_font_weight",
+      "min": 400,
+      "max": 900,
+      "step": 100,
+      "unit": "100",
+      "label": "Ticker text font weight",
+      "default": 700
+    },
+    {
+      "type": "checkbox",
+      "id": "italic_text",
+      "label": "Italic text",
+      "default": false
+    },
+    {
+      "type": "checkbox",
+      "id": "uppercase_text",
+      "label": "Uppercase text",
+      "default": false
+    },
+    {
+      "type": "header",
+      "content": "Images"
+    },
+    {
+      "type": "number",
+      "id": "mobile_image_height",
+      "default": 26,
+      "label": "Mobile image height"
+    },
+    {
+      "type": "number",
+      "id": "desktop_image_height",
+      "default": 40,
+      "label": "Desktop image height"
+    },
+    {
+      "type": "header",
+      "content": "Visibility"
+    },
+    {
+      "type": "paragraph",
+      "content": "Use these options if you want to display different tickers in the Header group across different product pages."
+    },
+    {
+      "type": "text",
+      "id": "hidden_products",
+      "label": "Product pages to hide the block on",
+      "info": "Handles of products to hide the block on, split with a comma."
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_specific_display",
+      "label": "Display the block on specific product pages only",
+      "default": false
+    },
+    {
+      "type": "text",
+      "id": "displayed_products",
+      "label": "Specific product pages to display the block on",
+      "info": "Applied if the checkbox above is checked. Handles of products to only display the block on, split with a comma."
+    },
+    {
+      "type": "header",
+      "content": "Mobile padding"
+    },
+    {
+      "type": "range",
+      "id": "mobile_padding_top",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "Padding top",
+      "default": 12
+    },
+    {
+      "type": "range",
+      "id": "mobile_padding_bottom",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "Padding bottom",
+      "default": 12
+    },
+    {
+      "type": "header",
+      "content": "Desktop padding"
+    },
+    {
+      "type": "range",
+      "id": "desktop_padding_top",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "Padding top",
+      "default": 16
+    },
+    {
+      "type": "range",
+      "id": "desktop_padding_bottom",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "Padding bottom",
+      "default": 16
+    },
+    {
+      "type": "header",
+      "content": "Custom color scheme",
+      "info": "Applied if Color scheme setting is set to Custom."
+    },
+    {
+      "type": "color",
+      "id": "custom_colors_background",
+      "default": "#FFFFFF",
+      "label": "Background color"
+    },
+    {
+      "type": "color_background",
+      "id": "custom_gradient_background",
+      "label": "Gradient background",
+      "info": "If added, replaces Background color when applicable."
+    },
+    {
+      "type": "color",
+      "id": "custom_colors_text",
+      "default": "#2E2A39",
+      "label": "Text"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "text",
+      "name": "Text",
+      "settings": [
+        {
+          "type": "text",
+          "id": "title",
+          "default": "Titan",
+          "label": "Text"
+        }
+      ]
+    },
+    {
+      "type": "image",
+      "name": "Image",
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Image"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Horizontal Ticker",
+      "blocks": [
+        {
+          "type": "text",
+          "settings": {
+            "title": "Titan"
+          }
+        },
+        {
+          "type": "text",
+          "settings": {
+            "title": "Titan"
+          }
+        },
+        {
+          "type": "text",
+          "settings": {
+            "title": "Titan"
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

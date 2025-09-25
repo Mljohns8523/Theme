@@ -1,0 +1,523 @@
+{% comment %}
+  Icon Bar Section
+  Displays a 4-column grid (desktop) or vertical stack (mobile) with 4 Google Material Icons and header texts.
+  Vibrant, customizable design inspired by beastbites.com for a "Why Choose Us" feel.
+  Uses Montserrat Black for headers, DM Sans for body, Google Material Icons (loaded via CDN).
+  Updated from Font Awesome to Material Icons, with text and SVG fallbacks (check icon).
+  Hides fallbacks when Material Icons are visible, removes diagnostic outlines.
+  Responsive, accessible, no animation, Trade theme compatible.
+{% endcomment %}
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link
+  href="https://fonts.googleapis.com/css2?family=Montserrat:wght@900&family=DM+Sans:wght@400;500;700&display=swap"
+  rel="stylesheet"
+>
+<link
+  href="https://fonts.googleapis.com/icon?family=Material+Icons"
+  rel="stylesheet"
+>
+
+<section
+  class="icon-bar icon-bar-{{ section.id }} color-{{ section.settings.color_scheme }} gradient section-{{ section.id }}-padding"
+  style="
+    --primary-color: {{ section.settings.primary_color }};
+    --highlight-color: {{ section.settings.highlight_color }};
+    --text-color: {{ section.settings.text_color }};
+    --icon-size: {{ section.settings.icon_size | divided_by: 10.0 }}rem;
+    --header-font-size: {{ section.settings.header_font_size | divided_by: 10.0 }}rem;
+    --padding-top: {{ section.settings.padding_top }}px;
+    --padding-bottom: {{ section.settings.padding_bottom }}px;
+    --grid-gap: {{ section.settings.grid_gap }}px;
+    --icon-border-radius: {{ section.settings.icon_border_radius }}px;
+  "
+>
+  <div class="page-width">
+    {% if section.settings.section_header != blank %}
+      <h2 class="icon-bar__section-header {{ section.settings.section_header_alignment }}">
+        {{ section.settings.section_header }}
+      </h2>
+    {% endif %}
+    <div class="icon-bar__grid {{ section.settings.content_alignment }}">
+      {% for block in section.blocks %}
+        {% assign icon_name = block.settings.icon | default: 'check' %}
+        <div class="icon-bar__item">
+          <i class="material-icons icon-bar__icon" aria-hidden="true" data-icon="{{ icon_name }}">{{ icon_name }}</i>
+          <span class="icon-bar__icon-fallback" aria-hidden="true">✔</span>
+          <svg class="icon-bar__icon-svg-fallback" aria-hidden="true" width="40" height="40" viewBox="0 0 24 24">
+            <!-- Google Material Icons 'check' SVG path -->
+            <path fill="{{ section.settings.primary_color | default: '#FF5733' }}" d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z"/>
+          </svg>
+          {% if block.settings.header != blank %}
+            <h3 class="icon-bar__header">{{ block.settings.header }}</h3>
+          {% else %}
+            <h3 class="icon-bar__header">Feature {{ forloop.index }}</h3>
+          {% endif %}
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const grid = document.querySelector('.icon-bar-{{ section.id }} .icon-bar__grid');
+    if (!grid) {
+      console.error('Icon Bar grid not found for section {{ section.id }}');
+      return;
+    }
+
+    const items = document.querySelectorAll('.icon-bar-{{ section.id }} .icon-bar__item');
+    if (items.length === 0) {
+      console.error('No items found in icon bar grid for section {{ section.id }}. Check block settings.');
+    } else {
+      console.log(`Found ${items.length} items in icon bar grid.`);
+    }
+
+    const icons = document.querySelectorAll('.icon-bar-{{ section.id }} .icon-bar__icon');
+    if (icons.length === 0) {
+      console.error('No icon elements found in section {{ section.id }}. Check Liquid rendering or block settings.');
+    } else {
+      console.log(`Found ${icons.length} icon elements in section {{ section.id }}.`);
+    }
+
+    icons.forEach((icon, index) => {
+      const iconName = icon.dataset.icon || 'unknown';
+      const computedStyle = window.getComputedStyle(icon);
+      const isVisible = icon.offsetWidth > 0 && icon.offsetHeight > 0 && computedStyle.display !== 'none' && computedStyle.visibility !== 'hidden' && computedStyle.opacity !== '0';
+      const fontFamily = computedStyle.fontFamily;
+      const display = computedStyle.display;
+      const color = computedStyle.color;
+      const visibility = computedStyle.visibility;
+      const fontSize = computedStyle.fontSize;
+      const opacity = computedStyle.opacity;
+
+      const textFallback = icon.nextElementSibling;
+      const svgFallback = textFallback ? textFallback.nextElementSibling : null;
+
+      if (isVisible) {
+        console.log(`Material Icon "${iconName}" loaded successfully for item ${index + 1}.`, {
+          fontFamily,
+          display,
+          color,
+          visibility,
+          fontSize,
+          opacity
+        });
+        // Hide fallbacks
+        if (textFallback && textFallback.classList.contains('icon-bar__icon-fallback')) {
+          textFallback.style.display = 'none';
+        }
+        if (svgFallback && svgFallback.classList.contains('icon-bar__icon-svg-fallback')) {
+          svgFallback.style.display = 'none';
+        }
+      } else {
+        console.error(`Material Icon "${iconName}" not rendered for item ${index + 1}.`, {
+          fontFamily,
+          display,
+          color,
+          visibility,
+          fontSize,
+          opacity,
+          classList: icon.className,
+          outerHTML: icon.outerHTML
+        });
+        // Show fallbacks
+        if (textFallback && textFallback.classList.contains('icon-bar__icon-fallback')) {
+          textFallback.style.display = 'inline-block';
+          console.log(`Text fallback shown for icon "${iconName}"`);
+        }
+        if (svgFallback && svgFallback.classList.contains('icon-bar__icon-svg-fallback')) {
+          svgFallback.style.display = 'inline-block';
+          console.log(`SVG fallback shown for icon "${iconName}"`);
+        }
+      }
+    });
+
+    // Verify Material Icons stylesheet
+    const materialStylesheet = Array.from(document.styleSheets).find(sheet => sheet.href && sheet.href.includes('material-icons'));
+    if (!materialStylesheet) {
+      console.error('Material Icons stylesheet not found. Ensure it is loaded via CDN.');
+    } else {
+      console.log('Material Icons stylesheet detected:', materialStylesheet.href);
+    }
+  });
+</script>
+
+{%- style -%}
+  .section-{{ section.id }}-padding {
+    padding-top: var(--padding-top) !important;
+    padding-bottom: var(--padding-bottom) !important;
+  }
+
+  .icon-bar-{{ section.id }} {
+    font-family: 'DM Sans', sans-serif !important;
+    color: var(--text-color) !important;
+    background: {{ section.settings.background_color | default: '#FFFFFF' }} !important;
+  }
+
+  .icon-bar__section-header {
+    font-family: 'Inter', sans-serif !important;
+    font-weight: 900 !important;
+    font-size: {{ section.settings.section_header_font_size | divided_by: 10.0 }}rem !important;
+    color: var(--text-color) !important;
+    margin-bottom: 2rem !important;
+    text-align: {{ section.settings.section_header_alignment }} !important;
+  }
+
+  .icon-bar__grid {
+    display: grid !important;
+    grid-template-columns: repeat(4, 1fr) !important;
+    gap: var(--grid-gap) !important;
+    opacity: 1 !important;
+  }
+
+  .icon-bar__item {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+  }
+
+  .icon-bar-{{ section.id }} .icon-bar__icon {
+    font-family: 'Material Icons' !important;
+    font-weight: normal !important;
+    font-style: normal !important;
+    font-size: var(--icon-size) !important;
+    color: var(--primary-color) !important;
+    margin-bottom: 1rem !important;
+    padding: 1rem !important;
+    border-radius: var(--icon-border-radius) !important;
+    background: {{ section.settings.icon_background_color | default: 'transparent' }} !important;
+    display: inline-block !important;
+    line-height: 1 !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    text-transform: none !important;
+    letter-spacing: normal !important;
+    word-wrap: normal !important;
+    white-space: nowrap !important;
+    direction: ltr !important;
+    -webkit-font-smoothing: antialiased !important;
+    -moz-osx-font-smoothing: grayscale !important;
+    text-rendering: optimizeLegibility !important;
+    outline: none !important;
+  }
+
+  .icon-bar-{{ section.id }} .icon-bar__icon:hover {
+    color: var(--highlight-color) !important;
+    transform: scale(1.1) !important;
+  }
+
+  .icon-bar-{{ section.id }} .icon-bar__icon-fallback {
+    font-family: 'DM Sans', sans-serif !important;
+    font-size: var(--icon-size) !important;
+    color: var(--primary-color) !important;
+    margin-bottom: 1rem !important;
+    padding: 1rem !important;
+    border-radius: var(--icon-border-radius) !important;
+    background: {{ section.settings.icon_background_color | default: 'transparent' }} !important;
+    display: none !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    outline: none !important;
+  }
+
+  .icon-bar-{{ section.id }} .icon-bar__icon-svg-fallback {
+    width: var(--icon-size) !important;
+    height: var(--icon-size) !important;
+    margin-bottom: 1rem !important;
+    padding: 1rem !important;
+    border-radius: var(--icon-border-radius) !important;
+    background: {{ section.settings.icon_background_color | default: 'transparent' }} !important;
+    display: none !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    outline: none !important;
+  }
+
+  .icon-bar__header {
+    font-family: 'i', sans-serif !important;
+    font-weight: 900 !important;
+    font-size: var(--header-font-size) !important;
+    color: var(--text-color) !important;
+    margin: 0 !important;
+    text-align: center !important;
+  }
+
+  .icon-bar__grid.left {
+    text-align: left !important;
+  }
+
+  .icon-bar__grid.center {
+    text-align: center !important;
+  }
+
+  .icon-bar__grid.right {
+    text-align: right !important;
+  }
+
+  @media screen and (max-width: 989px) {
+    .icon-bar__grid {
+      grid-template-columns: repeat(2, 1fr) !important;
+    }
+  }
+
+  @media screen and (max-width: 749px) {
+    .icon-bar__grid {
+      display: flex !important;
+      flex-direction: column !important;
+      gap: 1.5rem !important;
+    }
+
+    .icon-bar__item {
+      align-items: {{ section.settings.mobile_content_alignment }} !important;
+      text-align: {{ section.settings.mobile_content_alignment }} !important;
+    }
+  }
+{%- endstyle -%}
+
+{% schema %}
+{
+  "name": "Icon Bar",
+  "class": "section-icon-bar",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Section Header",
+      "info": "Optional header for the entire section."
+    },
+    {
+      "type": "text",
+      "id": "section_header",
+      "label": "Section Header",
+      "default": "Why Choose Us",
+      "info": "Enter a title for the section (e.g., 'Why Choose Us')."
+    },
+    {
+      "type": "range",
+      "id": "section_header_font_size",
+      "label": "Section Header Font Size",
+      "min": 16,
+      "max": 48,
+      "step": 2,
+      "unit": "px",
+      "default": 36
+    },
+    {
+      "type": "select",
+      "id": "section_header_alignment",
+      "options": [
+        { "value": "left", "label": "Left" },
+        { "value": "center", "label": "Center" },
+        { "value": "right", "label": "Right" }
+      ],
+      "default": "center",
+      "label": "Section Header Alignment"
+    },
+    {
+      "type": "header",
+      "content": "Layout",
+      "info": "Customize the grid layout and alignment."
+    },
+    {
+      "type": "select",
+      "id": "content_alignment",
+      "options": [
+        { "value": "left", "label": "Left" },
+        { "value": "center", "label": "Center" },
+        { "value": "right", "label": "Right" }
+      ],
+      "default": "center",
+      "label": "Content Alignment (Desktop)"
+    },
+    {
+      "type": "select",
+      "id": "mobile_content_alignment",
+      "options": [
+        { "value": "left", "label": "Left" },
+        { "value": "center", "label": "Center" },
+        { "value": "right", "label": "Right" }
+      ],
+      "default": "center",
+      "label": "Content Alignment (Mobile)"
+    },
+    {
+      "type": "range",
+      "id": "grid_gap",
+      "label": "Grid Gap",
+      "min": 10,
+      "max": 50,
+      "step": 5,
+      "unit": "px",
+      "default": 20,
+      "info": "Space between grid items."
+    },
+    {
+      "type": "header",
+      "content": "Styling",
+      "info": "Customize colors, icons, and typography."
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "Color Scheme",
+      "default": "background-1",
+      "info": "Select a theme color scheme or use custom colors below."
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Background Color",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "color",
+      "id": "primary_color",
+      "label": "Primary Color (Icons)",
+      "default": "#FF5733"
+    },
+    {
+      "type": "color",
+      "id": "highlight_color",
+      "label": "Highlight Color (Icon Hover)",
+      "default": "#E04E2D"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text Color",
+      "default": "#2E2A39",
+      "info": "Ensure contrast against background (avoid white)."
+    },
+    {
+      "type": "color",
+      "id": "icon_background_color",
+      "label": "Icon Background Color",
+      "default": "transparent",
+      "info": "Background for icon containers."
+    },
+    {
+      "type": "range",
+      "id": "icon_size",
+      "label": "Icon Size",
+      "min": 20,
+      "max": 80,
+      "step": 5,
+      "unit": "px",
+      "default": 40
+    },
+    {
+      "type": "range",
+      "id": "header_font_size",
+      "label": "Header Font Size",
+      "min": 14,
+      "max": 32,
+      "step": 2,
+      "unit": "px",
+      "default": 20
+    },
+    {
+      "type": "range",
+      "id": "icon_border_radius",
+      "label": "Icon Border Radius",
+      "min": 0,
+      "max": 50,
+      "step": 2,
+      "unit": "px",
+      "default": 12,
+      "info": "Roundness of icon container."
+    },
+    {
+      "type": "header",
+      "content": "Padding"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "label": "Padding Top",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "default": 40
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "label": "Padding Bottom",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "default": 40
+    }
+  ],
+  "blocks": [
+    {
+      "type": "feature",
+      "name": "Feature",
+      "settings": [
+        {
+          "type": "text",
+          "id": "icon",
+          "label": "Material Icon",
+          "info": "Enter Google Material Icon name (e.g., check, star, local_shipping). See https://fonts.google.com/icons. Leave blank for check.",
+          "default": "check"
+        },
+        {
+          "type": "text",
+          "id": "header",
+          "label": "Header",
+          "default": "Trusted Quality"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Icon Bar",
+      "settings": {
+        "section_header": "Why Choose Us",
+        "content_alignment": "center",
+        "mobile_content_alignment": "center",
+        "background_color": "#FFFFFF",
+        "primary_color": "#FF5733",
+        "highlight_color": "#E04E2D",
+        "text_color": "#2E2A39"
+      },
+      "blocks": [
+        {
+          "type": "feature",
+          "settings": {
+            "icon": "check",
+            "header": "12,319 Five-Star Reviews"
+          }
+        },
+        {
+          "type": "feature",
+          "settings": {
+            "icon": "check",
+            "header": "Swift & Simple Returns"
+          }
+        },
+        {
+          "type": "feature",
+          "settings": {
+            "icon": "check",
+            "header": "24/7 Elite Support"
+          }
+        },
+        {
+          "type": "feature",
+          "settings": {
+            "icon": "check",
+            "header": "Guaranteed Satisfaction"
+          }
+        }
+      ]
+    }
+  ],
+  "max_blocks": 4
+}
+{% endschema %}
