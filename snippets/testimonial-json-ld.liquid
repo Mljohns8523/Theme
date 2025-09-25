@@ -1,0 +1,17 @@
+{% if template == 'index' or template == 'collection' %}
+  {% assign testimonial_section = shop.sections | where: 'type', 'featured-testimonials' | first %}
+  {% if testimonial_section.blocks.size > 0 %}
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "AggregateRating",
+        "itemReviewed": {
+          "@type": "Product",
+          "name": "{{ shop.name | escape }} Products"
+        },
+        "ratingValue": "4.8",
+        "reviewCount": "{{ testimonial_section.blocks.size }}"
+      }
+    </script>
+  {% endif %}
+{% endif %}

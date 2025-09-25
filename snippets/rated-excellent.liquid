@@ -1,0 +1,62 @@
+<style>
+  .rated-excellent {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 0;
+    flex-wrap: nowrap;
+  }
+
+  .rated-excellent-stars i {
+    color: rgba(var(--color-button, 0, 0, 0), 1); /* Adjust fallback color */
+    font-size: 14px;
+    margin-right: -2px;
+    transition: transform 0.2s, color 0.2s;
+  }
+
+  .rated-excellent-stars i:hover {
+    transform: scale(1.1);
+  }
+
+  .rated-excellent-text {
+    font-size: 14px;
+    font-weight: 500;
+    color: #333;
+    white-space: nowrap;
+    padding-top: 5px;
+    font-family: DM Sans;
+  }
+
+  @media (max-width: 768px) {
+    .rated-excellent {
+      gap: 4px;
+      padding: 6px 0;
+    }
+    .rated-excellent-stars i {
+      font-size: 12px;
+      margin-right: -3px;
+    }
+    .rated-excellent-text {
+      font-size: 12px;
+    }
+  }
+</style>
+
+<div class="rated-excellent">
+  <div class="rated-excellent-stars">
+    <i class="fas fa-star"></i>
+    <i class="fas fa-star"></i>
+    <i class="fas fa-star"></i>
+    <i class="fas fa-star"></i>
+    <i class="fas fa-star"></i>
+  </div>
+  <span class="rated-excellent-text">Rated as “<b>Excellent</b>” (500+ reviews)</span>
+</div>
+
+<script>
+  document.querySelectorAll('.rated-excellent-stars i').forEach(star => {
+    star.addEventListener('click', () => {
+      star.style.color = star.style.color === 'rgb(0, 0, 0)' ? '#ccc' : 'rgb(0, 0, 0)';
+    });
+  });
+</script>

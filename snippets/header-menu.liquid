@@ -1,0 +1,21 @@
+{%- comment -%}
+  Simple inline top-level header menu
+  Usage: {% render 'header-menu', menu: some_menu %}
+{%- endcomment -%}
+
+{%- if menu and menu.links.size > 0 -%}
+  <ul class="list-menu list-menu--inline" role="list">
+    {%- for link in menu.links -%}
+      <li>
+        <a
+          class="list-menu__item list-menu__item--link link focus-inset"
+          href="{{ link.url }}"
+          {% if link.current %}aria-current="page"{% endif %}
+        >
+          {{ link.title }}
+        </a>
+      </li>
+    {%- endfor -%}
+  </ul>
+{%- endif -%}
+

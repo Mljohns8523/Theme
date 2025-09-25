@@ -1,0 +1,58 @@
+<style>
+  .hot-product-badge {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 2px 10px;
+    margin: 0;
+    background-color: white;
+    color: #ff1a1a;
+    font-weight: 600;
+    font-size: 13px;
+    border-radius: 5px;
+    border: 2px solid #ff1a1a;
+    box-shadow: 0 0 6px rgba(255, 0, 0, 0.5);
+    animation: borderPulse 1.5s infinite;
+    line-height: 1;
+  }
+
+  .hot-product-badge .dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background-color: #ff1a1a;
+    box-shadow: 0 0 0 rgba(255, 0, 0, 0.7);
+    animation: pulseDot 1.2s infinite;
+    flex-shrink: 0;
+  }
+
+  @keyframes pulseDot {
+    0% {
+      transform: scale(1);
+      box-shadow: 0 0 0 0 rgba(255, 0, 0, 0.7);
+    }
+    70% {
+      transform: scale(1.4);
+      box-shadow: 0 0 0 8px rgba(255, 0, 0, 0);
+    }
+    100% {
+      transform: scale(1);
+      box-shadow: 0 0 0 0 rgba(255, 0, 0, 0);
+    }
+  }
+
+  @keyframes borderPulse {
+    0%, 100% {
+      box-shadow: 0 0 6px rgba(255, 0, 0, 0.6), 0 0 10px rgba(255, 0, 0, 0.4);
+    }
+    50% {
+      box-shadow: 0 0 10px rgba(255, 0, 0, 1), 0 0 16px rgba(255, 0, 0, 0.7);
+    }
+  }
+</style>
+
+<div class="hot-product-badge">
+  <span class="dot"></span>
+  HOT PRODUCT
+</div>

@@ -1,0 +1,11 @@
+{% if template == 'collection' %}
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "CollectionPage",
+      "name": "{{ collection.title | escape }}",
+      "description": "{{ collection.description | strip_html | escape }}",
+      "url": "{{ shop.url }}{{ collection.url }}"
+    }
+  </script>
+{% endif %}

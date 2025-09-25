@@ -1,0 +1,83 @@
+<style>
+  .keyfeatures-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+    padding: 20px 0;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+  }
+  .keyfeature-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    max-width: 200px;
+  }
+  .keyfeature-icon-box {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 50px;
+    height: 50px;
+    border-radius: 8px;
+    background-color: rgba(0, 0, 0, 0.05);
+    margin-bottom: 8px;
+  }
+  .keyfeature-icon-box i {
+    color: rgba(var(--color-button), var(--alpha-button-background));
+    font-size: 24px;
+    transition: transform 0.2s;
+  }
+  .keyfeature-icon-box i:hover {
+    transform: scale(1.1);
+  }
+  .keyfeature-text {
+    font-size: 14px;
+    font-weight: 400;
+    color: #333;
+  }
+  @media (max-width: 768px) {
+    .keyfeatures-container {
+      gap: 15px;
+      padding: 15px 0;
+    }
+    .keyfeature-icon-box {
+      width: 40px;
+      height: 40px;
+    }
+    .keyfeature-icon-box i {
+      font-size: 20px;
+    }
+    .keyfeature-text {
+      font-size: 12px;
+    }
+  }
+</style>
+
+<div class="keyfeatures-container">
+  {% if icon_1 and text_1 %}
+    <div class="keyfeature-item">
+      <div class="keyfeature-icon-box">
+        <i class="{{ icon_1 }}"></i>
+      </div>
+      <span class="keyfeature-text">{{ text_1 }}</span>
+    </div>
+  {% endif %}
+  {% if icon_2 and text_2 %}
+    <div class="keyfeature-item">
+      <div class="keyfeature-icon-box">
+        <i class="{{ icon_2 }}"></i>
+      </div>
+      <span class="keyfeature-text">{{ text_2 }}</span>
+    </div>
+  {% endif %}
+  {% if icon_3 and text_3 %}
+    <div class="keyfeature-item">
+      <div class="keyfeature-icon-box">
+        <i class="{{ icon_3 }}"></i>
+      </div>
+      <span class="keyfeature-text">{{ text_3 }}</span>
+    </div>
+  {% endif %}
+</div>

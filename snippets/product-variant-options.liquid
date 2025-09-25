@@ -1,0 +1,32 @@
+{%- comment -%}
+Renders a single product option (as radio buttons) for Titan theme.
+
+Inputs:
+  - product: product object
+  - option: current option (from product.options_with_values)
+  - block: optional block object (unused)
+  - picker_type: 'button' (unused styling hook)
+
+Outputs valid inputs named option1/option2/option3 to match Shopify’s variant system.
+{%- endcomment -%}
+
+{%- liquid
+  assign position = option.position
+  assign name = 'option' | append: position
+-%}
+
+<div class="product-variant-options" role="radiogroup" aria-label="{{ option.name }}">
+  {%- for value in option.values -%}
+    {%- assign id = 'opt' | append: position | append: '-' | append: forloop.index0 -%}
+    <input
+      type="radio"
+      id="{{ id }}"
+      class="product-form__input"
+      name="{{ name }}"
+      value="{{ value }}"
+      {% if option.selected_value == value %}checked{% endif %}
+      data-option-position="{{ position }}"
+    >
+    <label for="{{ id }}">{{ value }}</label>
+  {%- endfor -%}
+</div>

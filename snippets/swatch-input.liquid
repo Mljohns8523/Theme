@@ -1,0 +1,53 @@
+{% comment %}
+  Renders a swatch input with circle styling
+
+  Accepts:
+  - id: {String} unique input id
+  - type: {String} input type. Accepts 'radio' or 'checkbox', defaults to 'radio' (optional)
+  - name: {String} input name
+  - value: {String} input value (variant ID)
+  - swatch: {String} swatch value (hex, rgb, or url)
+  - product_form_id: {String} id of the form associated with the input
+  - checked: {Boolean} default checked status
+  - disabled: {Boolean} default disabled status (optional)
+  - visually_disabled: {Boolean} style the swatch as disabled, but leave the input enabled (optional)
+  - shape: {String} swatch shape. Accepts 'square', 'circle', defaults to circle
+  - help_text: {String} additional content to render inside the label (optional)
+  - additional_props: {String} additional properties to attach to the input (optional)
+  - variant_id: {String} The variant ID associated with this option (required)
+
+  Usage:
+  {% render 'swatch-input',
+    id: id,
+    name: name,
+    value: variant_id,
+    swatch: swatch,
+    product_form_id: product_form_id,
+    checked: checked,
+    shape: 'circle'
+  %}
+{% endcomment %}
+
+<input
+  type="{{ type | default: 'radio' }}"
+  id="{{ id }}"
+  name="{{ name }}"
+  value="{{ variant_id }}"
+  form="{{ product_form_id }}"
+  class="swatch-input__input{% if visually_disabled %} visually-disabled{% endif %}"
+  {% if checked %}
+    checked
+  {% endif %}
+  {% if disabled %}
+    disabled
+  {% endif %}
+  data-variant-id="{{ variant_id }}"
+>
+<label
+  for="{{ id }}"
+  title="{{ value }}"
+  class="swatch-input__label swatch-input__label--circle{% if checked %} swatch-input__label--selected{% endif %}{% if visually_disabled %} swatch-input__label--disabled{% endif %}"
+>
+  {% render 'swatch', swatch: swatch, shape: shape | default: 'circle', additional_props: additional_props %}
+  {{ help_text }}
+</label>

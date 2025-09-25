@@ -1,0 +1,43 @@
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;700&display=swap');
+
+  .delivery-info {
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 400;
+    font-size: 14px;
+    color: #1a1a1a;
+    background: #ffeded;
+    border: 1.5px solid #ff4d4d;
+    padding: 10px 14px;
+    border-radius: 8px;
+    max-width: 350px;
+    margin: 16px auto 0;
+    text-align: center;
+    box-shadow: 0 3px 8px rgb(255 77 77 / 0.3);
+  }
+
+  .delivery-info strong {
+    font-weight: 700;
+    text-decoration: underline;
+  }
+</style>
+
+<div class="delivery-info" id="delivery-info">
+  Arrives in <strong>3 days</strong> if you order today.<br>
+  Or get it by <strong id="delivery-date"></strong>.
+</div>
+
+<script>
+  (function () {
+    function formatDate(date) {
+      const options = { month: "short", day: "numeric" };
+      return date.toLocaleDateString(undefined, options);
+    }
+
+    const today = new Date();
+    const deliveryDate = new Date(today);
+    deliveryDate.setDate(today.getDate() + 3);
+
+    document.getElementById("delivery-date").textContent = formatDate(deliveryDate);
+  })();
+</script>

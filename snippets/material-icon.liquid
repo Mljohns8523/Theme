@@ -1,0 +1,8 @@
+<span
+  class="{% if icon_style == 'outlined' %}material-symbols-outlined{% else %}material-icons{% endif %}{% if filled and icon_style == 'outlined' %} filled{% endif %}"
+  {% if filled and icon_style == 'outlined' %}
+    style="font-variation-settings: 'FILL' 1;"
+  {% endif %}
+>
+  {{ icon | strip | downcase | replace: ' ', '_' }}
+</span>
